@@ -4,8 +4,8 @@ import React, { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import Iconmap from "@/assets/ExhibitProImages/iconmapremove.png";
-import Iconround from "@/assets/ExhibitProImages/iconround.png";
+import Iconmap from "@/assets/exhibitproimages/iconmapremove.png";
+import Iconround from "@/assets/exhibitproimages/iconround.png";
 
 const ExhibitPro: React.FC = () => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);

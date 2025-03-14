@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useRef, useState } from "react";
 import Image from "next/image";
@@ -22,6 +22,8 @@ export default function Hero() {
     target: heroRef,
     offset: ["start end", "end start"],
   });
+
+  // Use translateY to apply scrolling effect
   const translateY = useTransform(scrollYProgress, [0, 1], [80, -80]);
 
   return (
@@ -72,6 +74,7 @@ export default function Hero() {
               className="relative w-96 sm:w-[32rem] lg:w-[48rem] xl:w-[64rem] 4xl:w-[140rem]"
               animate={{ translateY: [-20, 20] }}
               transition={{ repeat: Infinity, repeatType: "mirror", duration: 3, ease: "easeInOut" }}
+              style={{ y: translateY }} // ✅ Applied translateY
             >
               <Image
                 src={cogImage}

@@ -64,7 +64,7 @@ const Testimonials = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            Our Users' Response
+            Our Users&apos; Response
           </motion.h2>
 
           <motion.p
@@ -73,7 +73,7 @@ const Testimonials = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            From **intuitive design** to **powerful features**, our app has become an essential tool for users worldwide.
+            From <strong>intuitive design</strong> to <strong>powerful features</strong>, our app has become an essential tool for users worldwide.
           </motion.p>
         </div>
 

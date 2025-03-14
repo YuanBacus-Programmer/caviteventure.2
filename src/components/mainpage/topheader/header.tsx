@@ -15,7 +15,6 @@ import arrowRightUrl from "@/assets/headerimages/next (1).png";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
 
   const handleResize = useCallback(() => {
@@ -26,13 +25,6 @@ export default function Header() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [handleResize]);
-
-  const handleEventClick = () => setIsModalOpen(true);
-  const handleModalClose = () => setIsModalOpen(false);
-  const handleContinue = () => {
-    setIsModalOpen(false);
-    router.push("/signup");
-  };
 
   return (
     <>

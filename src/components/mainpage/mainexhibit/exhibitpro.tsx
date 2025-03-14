@@ -58,8 +58,8 @@ const ExhibitPro: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            Enjoy exploring the history of Cavite in both **3D** and **Augmented Reality**.
-            Experience a **modern discovery of the past** through **Cavite Venture**.
+            Enjoy exploring the history of Cavite in both <strong>3D</strong> and <strong>Augmented Reality</strong>.
+            Experience a <strong>modern discovery of the past</strong> through <strong>Cavite Venture</strong>.
           </motion.p>
         </div>
 
@@ -91,7 +91,7 @@ const ExhibitPro: React.FC = () => {
               />
               <h3 className="mt-4 font-bold text-lg sm:text-xl">3D Museum</h3>
               <p className="mt-2 text-sm sm:text-base lg:text-lg text-gray-700 text-center">
-                Explore Cavite's history in a **3D museum** and interact with digital exhibits.
+                Explore Cavite&apos;s history in a <strong>3D museum</strong> and interact with digital exhibits.
               </p>
               {hoveredCard === 1 && (
                 <motion.div
@@ -126,7 +126,7 @@ const ExhibitPro: React.FC = () => {
               />
               <h3 className="mt-4 font-bold text-lg sm:text-xl">Augmented Reality</h3>
               <p className="mt-2 text-sm sm:text-base lg:text-lg text-gray-700 text-center">
-                Experience **Augmented Reality** to uncover Cavite's rich history like never before.
+                Experience <strong>Augmented Reality</strong> to uncover Cavite&apos;s rich history like never before.
               </p>
               {hoveredCard === 2 && (
                 <motion.div

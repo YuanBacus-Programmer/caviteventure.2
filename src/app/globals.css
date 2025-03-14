@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/* Global smooth scroll behavior for a better user experience */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: theme(spacing.20); /* Helps with anchor navigation */
+  }
+  body {
+    @apply font-sans text-gray-900 bg-gray-50 antialiased;
+  }
+  img {
+    @apply max-w-full h-auto;
+  }
+}
+
+/* Custom Components using @layer */
+@layer components {
+  /* Button Styles */
+  .btn {
+    @apply bg-gray-900 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg font-medium inline-flex items-center justify-center tracking-tight transition duration-200 ease-in-out;
+  }
+  
+  .btn-primary {
+    @apply bg-gray-900 text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400;
+  }
+  
+  .btn-text {
+    @apply text-gray-900 bg-transparent hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300;
+  }
+  
+  .btn-secondary {
+    @apply bg-red-500 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg hover:bg-red-600 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-300;
+  }
+  
+  /* Logo and Image Ticker */
+  .logo-ticker-image {
+    @apply h-6 sm:h-8 w-auto;
+  }
+  
+  /* Tag Styles */
+  .tag {
+    @apply text-sm inline-flex border border-gray-300 px-3 py-1 rounded-lg tracking-tight;
+  }
+  
+  /* Section Title */
+  .section-title {
+    @apply text-center text-2xl sm:text-4xl md:text-5xl font-bold tracking-tighter bg-gradient-to-b from-gray-900 to-gray-600 text-transparent bg-clip-text mt-4 sm:mt-6;
+  }
+  
+  /* Section Description */
+  .section-description {
+    @apply text-center text-lg sm:text-xl leading-7 tracking-tight text-gray-800 mt-3 sm:mt-5;
+  }
+  
+  /* Card Component */
+  .card {
+    @apply p-6 sm:p-8 border border-gray-200 rounded-3xl shadow-md max-w-xs w-full hover:shadow-lg transition-shadow duration-200 ease-in-out;
+  }
+  
+  /* Input Field */
+  .input {
+    @apply w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out;
+  }
+  
+  /* Utility classes for sections */
+  .section {
+    @apply my-8 sm:my-12 px-4 md:px-8;
+  }
+}
+
+/* Additional Tailwind Utility Extensions */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+

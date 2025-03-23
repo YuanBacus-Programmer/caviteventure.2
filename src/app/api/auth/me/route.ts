@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   try {
     await dbConnect();
   } catch (error) {
-    console.error("DB connection error:", error);
+    console.error("DB connection error in /api/auth/me:", error);
     return NextResponse.json(
       { isAuthenticated: false, error: "DB connection failed" },
       { status: 500 }
@@ -22,11 +22,12 @@ export async function GET(req: NextRequest) {
   if (!token) {
     return NextResponse.json({ isAuthenticated: false });
   }
+
   try {
     const userId = await getUserIdByToken(token);
     return NextResponse.json({ isAuthenticated: !!userId });
   } catch (error) {
-    console.error("Error checking session:", error);
+    console.error("Session check error in /api/auth/me:", error);
     return NextResponse.json(
       { isAuthenticated: false, error: "Session check failed" },
       { status: 500 }

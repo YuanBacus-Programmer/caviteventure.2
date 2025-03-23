@@ -1,32 +1,26 @@
 import mongoose from "mongoose";
 
-// Get the MongoDB URI from environment variables.
 const MONGODB_URI = process.env.MONGODB_URI;
+
 if (!MONGODB_URI) {
   throw new Error("Please define the MONGODB_URI environment variable in .env");
 }
 
-// Declare a global type for our cached connection.
-// This ensures TypeScript knows that globalThis has a "mongooseCache" property.
-declare global {
-  // eslint-disable-next-line no-var
-  var mongooseCache: {
-    conn: typeof mongoose | null;
-    promise: Promise<typeof mongoose> | null;
-  } | undefined;
-}
+// Global cache so we don’t re-init the connection on each request in dev
+let cached = (global as any).mongoose as { conn: typeof mongoose | null; promise: Promise<typeof mongoose> | null };
 
-// Use globalThis.mongooseCache or initialize it.
-let cached = globalThis.mongooseCache ?? { conn: null, promise: null };
-globalThis.mongooseCache = cached;
+if (!cached) {
+  cached = (global as any).mongoose = { conn: null, promise: null };
+}
 
 async function dbConnect() {
   if (cached.conn) {
     return cached.conn;
   }
   if (!cached.promise) {
-    const opts = { bufferCommands: false };
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => mongoose);
+    cached.promise = mongoose.connect(MONGODB_URI!).then((mongoose) => {
+      return mongoose;
+    });
   }
   cached.conn = await cached.promise;
   return cached.conn;

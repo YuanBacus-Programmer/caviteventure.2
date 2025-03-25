@@ -1,0 +1,254 @@
+"use client";
+
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Environment } from "@react-three/drei";
+import { useRef, useState, useEffect } from "react";
+import * as THREE from "three";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+
+// Define props for the BoxWithEdges component
+interface BoxWithEdgesProps {
+  position: [number, number, number];
+}
+
+const BoxWithEdges: React.FC<BoxWithEdgesProps> = ({ position }) => {
+  return (
+    <group position={position}>
+      <mesh>
+        <boxGeometry args={[0.5, 0.5, 0.5]} />
+        <meshPhysicalMaterial
+          color="#0070f3"
+          roughness={0.1}
+          metalness={0.8}
+          transparent
+          opacity={0.9}
+          transmission={0.5}
+          clearcoat={1}
+        />
+      </mesh>
+      <lineSegments>
+        <edgesGeometry args={[new THREE.BoxGeometry(0.5, 0.5, 0.5)]} />
+        <lineBasicMaterial color="#214dbd" linewidth={2} />
+      </lineSegments>
+    </group>
+  );
+};
+
+// Restrict letters to those defined in the shapes
+type Letter = "N" | "E" | "X" | "T" | "C" | "A" | "V" | "I" | "U" | "R";
+
+// Define props for the BoxLetter component
+interface BoxLetterProps {
+  letter: Letter;
+  position: [number, number, number];
+}
+
+const BoxLetter: React.FC<BoxLetterProps> = ({ letter, position }) => {
+  const group = useRef<THREE.Group>(null);
+
+  // Return the shape for the given letter
+  const getLetterShape = (letter: Letter): number[][] => {
+    const shapes: Record<string, number[][]> = {
+      N: [
+        [1, 0, 0, 0, 1],
+        [1, 1, 0, 0, 1],
+        [1, 0, 1, 0, 1],
+        [1, 0, 0, 1, 1],
+        [1, 0, 0, 0, 1],
+      ],
+      E: [
+        [1, 1, 1],
+        [1, 0, 0],
+        [1, 1, 0],
+        [1, 0, 0],
+        [1, 1, 1],
+      ],
+      X: [
+        [1, 0, 0, 0, 1],
+        [0, 1, 0, 1, 0],
+        [0, 0, 1, 0, 0],
+        [0, 1, 0, 1, 0],
+        [1, 0, 0, 0, 1],
+      ],
+      T: [
+        [1, 1, 1],
+        [0, 1, 0],
+        [0, 1, 0],
+        [0, 1, 0],
+        [0, 1, 0],
+      ],
+      C: [
+        [1, 1, 1],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 0, 0],
+        [1, 1, 1],
+      ],
+      A: [
+        [0, 1, 0],
+        [1, 0, 1],
+        [1, 1, 1],
+        [1, 0, 1],
+        [1, 0, 1],
+      ],
+      V: [
+        [1, 0, 1],
+        [1, 0, 1],
+        [1, 0, 1],
+        [1, 0, 1],
+        [0, 1, 0],
+      ],
+      I: [
+        [1, 1, 1],
+        [0, 1, 0],
+        [0, 1, 0],
+        [0, 1, 0],
+        [1, 1, 1],
+      ],
+      U: [
+        [1, 0, 1],
+        [1, 0, 1],
+        [1, 0, 1],
+        [1, 0, 1],
+        [1, 1, 1],
+      ],
+      R: [
+        [1, 1, 0],
+        [1, 0, 1],
+        [1, 1, 0],
+        [1, 0, 1],
+        [1, 0, 1],
+      ],
+    };
+    return shapes[letter] || shapes["N"];
+  };
+
+  const letterShape = getLetterShape(letter);
+
+  return (
+    <group ref={group} position={position}>
+      {letterShape.map((row: number[], i: number) =>
+        row.map((cell, j) => {
+          if (cell) {
+            let xOffset =
+              j * 0.5 -
+              (letter === "T"
+                ? 1
+                : letter === "E"
+                ? 0.5
+                : letter === "X" || letter === "N"
+                ? 1
+                : 0.75);
+
+            if (letter === "N") {
+              if (j === 0) {
+                xOffset = -0.5;
+              } else if (j === 1) {
+                xOffset = 0;
+              } else if (j === 2) {
+                xOffset = 0.25;
+              } else if (j === 3) {
+                xOffset = 0.5;
+              } else if (j === 4) {
+                xOffset = 1;
+              }
+            }
+
+            if (letter === "X") {
+              if (j === 0) {
+                xOffset = -1;
+              } else if (j === 1) {
+                xOffset = -0.75;
+              } else if (j === 2) {
+                xOffset = -0.25;
+              } else if (j === 3) {
+                xOffset = 0.25;
+              } else if (j === 4) {
+                xOffset = 0.5;
+              }
+            }
+
+            return (
+              <BoxWithEdges
+                key={`${i}-${j}`}
+                position={[xOffset, (4 - i) * 0.5 - 1, 0]}
+              />
+            );
+          }
+          return null;
+        })
+      )}
+    </group>
+  );
+};
+
+const Scene = () => {
+  // Create a ref with the proper type for OrbitControls
+  const orbitControlsRef = useRef<OrbitControlsImpl | null>(null);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    setIsMobileDevice(isMobile());
+  }, []);
+
+  return (
+    <>
+      <group position={[-0.5, 0, 0]} rotation={[0, Math.PI / 1.5, 0]}>
+        {/* CAVITE - top row */}
+        <BoxLetter letter="C" position={[-9, 1, 0]} />
+        <BoxLetter letter="A" position={[-6, 1, 0]} />
+        <BoxLetter letter="V" position={[-3, 1, 0]} />
+        <BoxLetter letter="I" position={[0, 1, 0]} />
+        <BoxLetter letter="T" position={[3, 1, 0]} />
+        <BoxLetter letter="E" position={[6, 1, 0]} />
+
+        {/* VENTURE - bottom row, slightly to the right */}
+        <BoxLetter letter="V" position={[-7, -2, 0]} />
+        <BoxLetter letter="E" position={[-4, -2, 0]} />
+        <BoxLetter letter="N" position={[-1, -2, 0]} />
+        <BoxLetter letter="T" position={[2, -2, 0]} />
+        <BoxLetter letter="U" position={[5, -2, 0]} />
+        <BoxLetter letter="R" position={[8, -2, 0]} />
+        <BoxLetter letter="E" position={[11, -2, 0]} />
+      </group>
+      <OrbitControls
+  ref={orbitControlsRef}
+  enableZoom
+  enablePan
+  enableRotate
+  autoRotate
+  autoRotateSpeed={2}
+/>
+
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[5, 5, 5]} intensity={0.5} color="#ffffff" />
+
+      <Environment
+        files={
+          isMobileDevice
+            ? "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/download3-7FArHVIJTFszlXm2045mQDPzsZqAyo.jpg"
+            : "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/dither_it_M3_Drone_Shot_equirectangular-jpg_San_Francisco_Big_City_1287677938_12251179%20(1)-NY2qcmpjkyG6rDp1cPGIdX0bHk3hMR.jpg"
+        }
+        background
+      />
+    </>
+  );
+};
+
+export default function Component() {
+  return (
+    <div className="w-full h-screen bg-gray-900">
+      <Canvas camera={{ position: [15, 0, -20], fov: 50 }}>
+        <Scene />
+      </Canvas>
+    </div>
+  );
+}
+
+// Helper function to detect mobile devices
+function isMobile() {
+  if (typeof window === "undefined") return false;
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+}

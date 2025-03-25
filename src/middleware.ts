@@ -5,21 +5,22 @@ import { parseCookies } from "@/lib/cookieUtils";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // We define all protected routes
-  const protectedRoutes = ["/homepage", "/eventpage", "/exihibitpage", "/profilepage"];
+  // Minimal example: check if user has any role cookie
+  const roleCookie = request.cookies.get("role")?.value || "";
 
-  // If the user tries to access any of these routes (or sub-routes),
-  // check for the session token
-  if (protectedRoutes.some((route) => pathname.startsWith(route))) {
-    const cookieHeader = request.headers.get("cookie") || "";
-    const cookies = parseCookies(cookieHeader);
-    const token = cookies["sessionToken"];
-
-    if (!token) {
-      // If no token => redirect to signin
+  // If user tries to visit /create-event or /admindashboard,
+  // they must be "admin" or "superadmin".
+  if (pathname.startsWith("/create-event") || pathname.startsWith("/admindashboard")) {
+    if (!["admin", "superadmin"].includes(roleCookie)) {
       return NextResponse.redirect(new URL("/signin", request.url));
     }
-    // If token is present, we let them proceed (DB check is done in your server page).
+  }
+
+  // If user tries to visit /event-approval, must be superadmin
+  if (pathname.startsWith("/event-approval")) {
+    if (roleCookie !== "superadmin") {
+      return NextResponse.redirect(new URL("/signin", request.url));
+    }
   }
 
   return NextResponse.next();

@@ -1,4 +1,4 @@
-// File: app/event-approval/page.tsx
+"use client"
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";

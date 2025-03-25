@@ -19,7 +19,6 @@ export default async function EventApprovalPage() {
 }
 
 // A client component for listing + approving events
-"use client";
 function EventApprovalClient() {
   // We can read 'events' in memory
   const pendingEvents = events.filter((ev) => ev.status === "pending");

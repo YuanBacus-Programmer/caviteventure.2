@@ -1,23 +1,29 @@
-import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
-import dbConnect from "@/lib/dbConnect"
-import User, { type IUser } from "@/models/User"
-import { getUserIdByToken } from "@/lib/auth"
-import SignOutButton from "@/components/signout/SignOutButton"
-import Link from "next/link"
+// File: app/profilepage/page.tsx
+export const runtime = "nodejs";
+
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import dbConnect from "@/lib/dbConnect";
+import User, { type IUser } from "@/models/User";
+import { getUserIdByToken } from "@/lib/auth";
+import SignOutButton from "@/components/signout/SignOutButton";
+import Link from "next/link";
 
 export default async function ProfilePage() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get("sessionToken")?.value
-  if (!token) redirect("/signin")
+  // 1) Parse session token
+  const cookieStore = await cookies();
+  const token = cookieStore.get("sessionToken")?.value;
+  if (!token) redirect("/signin");
 
-  await dbConnect()
-  const userId = await getUserIdByToken(token!)
-  if (!userId) redirect("/signin")
+  // 2) Connect & load user
+  await dbConnect();
+  const userId = await getUserIdByToken(token);
+  if (!userId) redirect("/signin");
 
-  const user = (await User.findById(userId).lean()) as IUser | null
-  if (!user) redirect("/signin")
+  const user = (await User.findById(userId).lean()) as IUser | null;
+  if (!user) redirect("/signin");
 
+  // At this point, `user.profilePicture` must be present in DB if you saved it there
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="max-w-4xl mx-auto py-12 px-4 sm:px-6">
@@ -33,13 +39,15 @@ export default async function ProfilePage() {
             <div className="absolute -bottom-12 left-8">
               {user.profilePicture ? (
                 <img
-                  src={user.profilePicture || "/placeholder.svg"}
+                  src={user.profilePicture}
                   alt="Profile"
                   className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
                 />
               ) : (
                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-100 to-gray-300 border-4 border-white shadow-md flex items-center justify-center">
-                  <span className="text-2xl font-medium text-gray-500">{user.name?.charAt(0) || "U"}</span>
+                  <span className="text-2xl font-medium text-gray-500">
+                    {user.name?.charAt(0)?.toUpperCase() || "U"}
+                  </span>
                 </div>
               )}
             </div>
@@ -50,21 +58,29 @@ export default async function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Personal Information</h2>
+                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    Personal Information
+                  </h2>
                   <div className="mt-3 space-y-4">
                     <div>
                       <h3 className="text-xs text-gray-500">Full Name</h3>
-                      <p className="mt-1 text-lg font-medium text-gray-900">{user.name || "Not provided"}</p>
+                      <p className="mt-1 text-lg font-medium text-gray-900">
+                        {user.name || "Not provided"}
+                      </p>
                     </div>
                     <div>
                       <h3 className="text-xs text-gray-500">Email Address</h3>
-                      <p className="mt-1 text-lg font-medium text-gray-900">{user.email || "Not provided"}</p>
+                      <p className="mt-1 text-lg font-medium text-gray-900">
+                        {user.email || "Not provided"}
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Account Details</h2>
+                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    Account Details
+                  </h2>
                   <div className="mt-3 space-y-4">
                     <div>
                       <h3 className="text-xs text-gray-500">Role</h3>
@@ -78,17 +94,23 @@ export default async function ProfilePage() {
 
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Location</h2>
+                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    Location
+                  </h2>
                   <div className="mt-3 space-y-4">
                     <div>
                       <h3 className="text-xs text-gray-500">City</h3>
-                      <p className="mt-1 text-lg font-medium text-gray-900">{user.city || "Not provided"}</p>
+                      <p className="mt-1 text-lg font-medium text-gray-900">
+                        {user.city || "Not provided"}
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Personal Details</h2>
+                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    Personal Details
+                  </h2>
                   <div className="mt-3 space-y-4">
                     <div>
                       <h3 className="text-xs text-gray-500">Gender</h3>
@@ -119,7 +141,8 @@ export default async function ProfilePage() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 
+                     3.536L6.5 21.036H3v-3.572L16.732 3.732z"
                 />
               </svg>
               Edit Profile
@@ -128,6 +151,5 @@ export default async function ProfilePage() {
         </div>
       </main>
     </div>
-  )
+  );
 }
-

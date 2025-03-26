@@ -1,90 +1,103 @@
-// File: app/verify-email/page.tsx
-"use client";
+"use client"
 
-import React, { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import type React from "react"
+import { useState, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 function VerifyEmailContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const initialEmail = searchParams.get("email") || "";
-  const [email, setEmail] = useState(initialEmail);
-  const [code, setCode] = useState("");
-  const [status, setStatus] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const initialEmail = searchParams.get("email") || ""
+  const [email, setEmail] = useState(initialEmail)
+  const [code, setCode] = useState("")
+  const [status, setStatus] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("");
-    setIsLoading(true);
+    e.preventDefault()
+    setStatus("")
+    setIsLoading(true)
 
     try {
       const res = await fetch("/api/auth/verifyCode", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code }),
-      });
+      })
 
-      const data = await res.json();
+      const data = await res.json()
       if (res.ok) {
-        setStatus("Verification successful! You can now sign in.");
+        setStatus("Verification successful! You can now sign in.")
         setTimeout(() => {
-          router.push("/signin");
-        }, 1500);
+          router.push("/signin")
+        }, 1500)
       } else {
-        setStatus(data.message || "Verification error.");
+        setStatus(data.message || "Verification error.")
       }
     } catch (err) {
-      console.error(err);
-      setStatus("An error occurred while verifying.");
+      console.error(err)
+      setStatus("An error occurred while verifying.")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Verify Your Email</h1>
-      <form onSubmit={handleVerify} className="max-w-md mx-auto">
-        <div className="mb-4">
-          <label className="block font-medium mb-1">Email:</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-          />
+    <main className="flex items-center justify-center min-h-screen p-6 bg-sand-100">
+      <div className="w-full max-w-md bg-white border border-sand-300 rounded shadow-md overflow-hidden">
+        <div className="bg-sand-200 border-b border-sand-300 p-4">
+          <h1 className="text-2xl font-bold text-brown-900">Verify Your Email</h1>
         </div>
-        <div className="mb-4">
-          <label className="block font-medium mb-1">Verification Code (6 digits):</label>
-          <input
-            type="text"
-            required
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-          />
+        <div className="p-6">
+          <form onSubmit={handleVerify} className="space-y-4">
+            <div className="space-y-2">
+              <label className="block font-medium text-brown-800 mb-1">Email:</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3 border border-sand-300 rounded bg-sand-50 focus:outline-none focus:border-brown-600 focus:ring-1 focus:ring-brown-600"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block font-medium text-brown-800 mb-1">Verification Code (6 digits):</label>
+              <input
+                type="text"
+                required
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="w-full p-3 border border-sand-300 rounded bg-sand-50 focus:outline-none focus:border-brown-600 focus:ring-1 focus:ring-brown-600"
+              />
+            </div>
+            {status && <div className="p-3 rounded bg-sand-200 text-brown-800 font-medium">{status}</div>}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full p-3 rounded text-sand-100 font-medium ${
+                isLoading ? "bg-brown-600 cursor-not-allowed" : "bg-brown-800 hover:bg-brown-900"
+              }`}
+            >
+              {isLoading ? "Verifying..." : "Verify"}
+            </button>
+          </form>
         </div>
-        {status && <p className="mt-2 font-semibold text-gray-700">{status}</p>}
-        <button
-          type="submit"
-          disabled={isLoading}
-          className={`mt-4 p-3 rounded text-white font-medium ${
-            isLoading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-          }`}
-        >
-          {isLoading ? "Verifying..." : "Verify"}
-        </button>
-      </form>
+      </div>
     </main>
-  );
+  )
 }
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen bg-sand-100">
+          <div className="animate-spin h-8 w-8 border-4 border-brown-800 border-t-transparent rounded-full"></div>
+        </div>
+      }
+    >
       <VerifyEmailContent />
     </Suspense>
-  );
+  )
 }
+

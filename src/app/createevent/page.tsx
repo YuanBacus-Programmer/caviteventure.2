@@ -1,25 +1,28 @@
 // File: app/createevent/page.tsx
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import CreateEventClient from "./CreateEventClient";
+import dbConnect from "@/lib/dbConnect";
+import { getUserIdByToken } from "@/lib/auth";
+import User from "@/models/User";
 
 export default async function CreateEventPage() {
-  // 1) Grab cookie store (await if your Next version returns a Promise)
+  // 1) Grab the cookie store (must await if cookies() is a Promise in your Next version)
   const cookieStore = await cookies();
+
+  // 2) Get all cookies
   const allCookies = cookieStore.getAll();
 
-  // 2) Build a 'cookie' header string
+  // 3) Build a 'cookie' header string (add explicit types for name/value)
   const cookieHeader = allCookies
     .map(({ name, value }: { name: string; value: string }) => `${name}=${value}`)
     .join("; ");
 
-  // 3) Check if user is admin by calling /api/auth/me
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const authMeUrl = `${baseUrl}/api/auth/me`;
-
-  const authRes = await fetch(authMeUrl, {
+  // 4) Verify user is admin via /api/auth/me
+  const authRes = await fetch("/api/auth/me", {
     headers: { cookie: cookieHeader },
     cache: "no-store",
   });
@@ -29,6 +32,13 @@ export default async function CreateEventPage() {
     redirect("/signin");
   }
 
-  // 4) If admin, render the client form
+  // 5) Additional checks (like confirming user in DB)
+  await dbConnect();
+  const isAdminUser = await User.findById(authData.user._id).lean();
+  if (!isAdminUser || isAdminUser.role !== "admin") {
+    redirect("/signin");
+  }
+
+  // 6) Render the form
   return <CreateEventClient />;
 }

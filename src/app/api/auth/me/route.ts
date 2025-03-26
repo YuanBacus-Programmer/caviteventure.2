@@ -1,10 +1,11 @@
 // File: app/api/auth/me/route.ts
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { getUserIdByToken } from "@/lib/auth";
-import User from "@/models/User"; // Import your User model
+import User from "@/models/User";
 
 export async function GET(req: NextRequest) {
   try {
@@ -33,18 +34,21 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ isAuthenticated: false });
     }
 
-    // 4) Fetch the user from DB to get their role
+    // 4) Fetch the user from DB to get their role and other fields
     const user = await User.findById(userId).lean();
     if (!user) {
       return NextResponse.json({ isAuthenticated: false });
     }
 
-    // 5) Return isAuthenticated + nested user object for role
+    // 5) Return isAuthenticated + the user object
     return NextResponse.json({
       isAuthenticated: true,
       user: {
-        role: user.role, // e.g. "user", "admin", or "superadmin"
-        // ...other user fields if you want them
+        _id: user._id.toString(), // convert ObjectId to string
+        name: user.name,
+        email: user.email,
+        role: user.role, 
+        // add more fields if desired
       },
     });
   } catch (error) {

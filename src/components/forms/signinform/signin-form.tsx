@@ -1,58 +1,62 @@
-"use client"
-import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Eye, EyeOff } from "lucide-react"
+"use client";
+import type React from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function SignInForm() {
-  const router = useRouter()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [status, setStatus] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setStatus("")
-    setIsLoading(true)
+    e.preventDefault();
+    setStatus("");
+    setIsLoading(true);
 
     try {
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-      })
-      const data = await res.json()
+      });
+      const data = await res.json();
 
       if (res.ok) {
-        setStatus("Sign in successful!")
-        // Navigate to /homepage
+        setStatus("Sign in successful!");
+        // Redirect based on user role
         setTimeout(() => {
-          router.push("/homepage")
-        }, 1000)
+          if (data.role === "admin") {
+            router.push("/dashboard");
+          } else {
+            router.push("/homepage");
+          }
+        }, 1000);
       } else {
-        setStatus(data.message || "Sign in error.")
+        setStatus(data.message || "Sign in error.");
       }
     } catch (err) {
-      console.error(err)
-      setStatus("An error occurred during sign in.")
+      console.error(err);
+      setStatus("An error occurred during sign in.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f5f0e6] p-4">
       <div className="bg-[#faf6f0] rounded-lg shadow-md max-w-lg w-full p-8 border border-[#e6dfd3]">
         <h2 className="text-2xl font-semibold text-center mb-6 text-[#5d4037]">Sign In</h2>
         <form onSubmit={handleSubmit} className="flex flex-col">
-          {/* email field */}
+          {/* Email field */}
           <div className="mb-4">
             <label className="block mb-1 font-medium text-[#5d4037]">Email</label>
             <input
@@ -64,7 +68,7 @@ export default function SignInForm() {
             />
           </div>
 
-          {/* password field */}
+          {/* Password field */}
           <div className="mb-4">
             <label className="block mb-1 font-medium text-[#5d4037]">Password</label>
             <div className="relative">
@@ -113,6 +117,5 @@ export default function SignInForm() {
         </form>
       </div>
     </div>
-  )
+  );
 }
-

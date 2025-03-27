@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     // 6) Return success + user role in JSON
     const response = NextResponse.json({
       message: "Sign in successful.",
-      role: user.role, // e.g. "user" or "admin" or "superadmin"
+      role: user.role, // e.g. "user", "admin", or "superadmin"
     });
     response.headers.set("Set-Cookie", cookie);
 

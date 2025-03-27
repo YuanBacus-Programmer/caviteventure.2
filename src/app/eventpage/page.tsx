@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import dbConnect from "@/lib/dbConnect";
 import { getUserIdByToken } from "@/lib/auth";
 import Event, { IEvent } from "@/models/Event";
+import NextBlock from "@/components/nextblock/next-blocks"
 
 export const runtime = "nodejs";
 
@@ -25,8 +26,7 @@ export default async function EventPage() {
 
   return (
     <main className="p-6">
-      <h1 className="text-2xl font-bold">Event Page</h1>
-      <p className="mt-4">A private event page. Only signed-in users can view it.</p>
+      <NextBlock/>
 
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-2">Approved Events</h2>

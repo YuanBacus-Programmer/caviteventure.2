@@ -6,7 +6,7 @@ import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
-// Define props for the BoxWithEdges component
+// --- BoxWithEdges Component (unchanged) ---
 interface BoxWithEdgesProps {
   position: [number, number, number];
 }
@@ -17,7 +17,7 @@ const BoxWithEdges: React.FC<BoxWithEdgesProps> = ({ position }) => {
       <mesh>
         <boxGeometry args={[0.5, 0.5, 0.5]} />
         <meshPhysicalMaterial
-          color="#0070f3"
+          color="#F4E1C1"
           roughness={0.1}
           metalness={0.8}
           transparent
@@ -27,26 +27,25 @@ const BoxWithEdges: React.FC<BoxWithEdgesProps> = ({ position }) => {
         />
       </mesh>
       <lineSegments>
+        {/* A slightly darker sand/brown for the edges */}
         <edgesGeometry args={[new THREE.BoxGeometry(0.5, 0.5, 0.5)]} />
-        <lineBasicMaterial color="#214dbd" linewidth={2} />
+        <lineBasicMaterial color="#A68B6C" linewidth={2} />
       </lineSegments>
     </group>
   );
 };
 
-// Restrict letters to those defined in the shapes
-type Letter = "N" | "E" | "X" | "T" | "C" | "A" | "V" | "I" | "U" | "R";
+// --- BoxLetter Component ---
+// (Updated to include "S" if needed in the allowed type)
+type Letter = "N" | "E" | "X" | "T" | "C" | "A" | "V" | "I" | "U" | "R" | "S";
 
-// Define props for the BoxLetter component
 interface BoxLetterProps {
   letter: Letter;
   position: [number, number, number];
 }
 
 const BoxLetter: React.FC<BoxLetterProps> = ({ letter, position }) => {
-  const group = useRef<THREE.Group>(null);
-
-  // Return the shape for the given letter
+  // Define the shape for each letter.
   const getLetterShape = (letter: Letter): number[][] => {
     const shapes: Record<string, number[][]> = {
       N: [
@@ -119,6 +118,13 @@ const BoxLetter: React.FC<BoxLetterProps> = ({ letter, position }) => {
         [1, 0, 1],
         [1, 0, 1],
       ],
+      S: [
+        [1, 1, 1],
+        [1, 0, 0],
+        [1, 1, 1],
+        [0, 0, 1],
+        [1, 1, 1],
+      ],
     };
     return shapes[letter] || shapes["N"];
   };
@@ -126,48 +132,11 @@ const BoxLetter: React.FC<BoxLetterProps> = ({ letter, position }) => {
   const letterShape = getLetterShape(letter);
 
   return (
-    <group ref={group} position={position}>
+    <group position={position}>
       {letterShape.map((row: number[], i: number) =>
         row.map((cell, j) => {
           if (cell) {
-            let xOffset =
-              j * 0.5 -
-              (letter === "T"
-                ? 1
-                : letter === "E"
-                ? 0.5
-                : letter === "X" || letter === "N"
-                ? 1
-                : 0.75);
-
-            if (letter === "N") {
-              if (j === 0) {
-                xOffset = -0.5;
-              } else if (j === 1) {
-                xOffset = 0;
-              } else if (j === 2) {
-                xOffset = 0.25;
-              } else if (j === 3) {
-                xOffset = 0.5;
-              } else if (j === 4) {
-                xOffset = 1;
-              }
-            }
-
-            if (letter === "X") {
-              if (j === 0) {
-                xOffset = -1;
-              } else if (j === 1) {
-                xOffset = -0.75;
-              } else if (j === 2) {
-                xOffset = -0.25;
-              } else if (j === 3) {
-                xOffset = 0.25;
-              } else if (j === 4) {
-                xOffset = 0.5;
-              }
-            }
-
+            let xOffset = j * 0.5 - 1; // adjust offset for centering
             return (
               <BoxWithEdges
                 key={`${i}-${j}`}
@@ -182,8 +151,9 @@ const BoxLetter: React.FC<BoxLetterProps> = ({ letter, position }) => {
   );
 };
 
+// --- Scene Component ---
 const Scene = () => {
-  // Create a ref with the proper type for OrbitControls
+  // Create a ref for OrbitControls
   const orbitControlsRef = useRef<OrbitControlsImpl | null>(null);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
 
@@ -193,51 +163,33 @@ const Scene = () => {
 
   return (
     <>
-      <group position={[-0.5, 0, 0]} rotation={[0, Math.PI / 1.5, 0]}>
-        {/* CAVITE - top row */}
-        <BoxLetter letter="C" position={[-9, 1, 0]} />
-        <BoxLetter letter="A" position={[-6, 1, 0]} />
-        <BoxLetter letter="V" position={[-3, 1, 0]} />
-        <BoxLetter letter="I" position={[0, 1, 0]} />
-        <BoxLetter letter="T" position={[3, 1, 0]} />
-        <BoxLetter letter="E" position={[6, 1, 0]} />
-
-        {/* VENTURE - bottom row, slightly to the right */}
-        <BoxLetter letter="V" position={[-7, -2, 0]} />
-        <BoxLetter letter="E" position={[-4, -2, 0]} />
-        <BoxLetter letter="N" position={[-1, -2, 0]} />
-        <BoxLetter letter="T" position={[2, -2, 0]} />
-        <BoxLetter letter="U" position={[5, -2, 0]} />
-        <BoxLetter letter="R" position={[8, -2, 0]} />
-        <BoxLetter letter="E" position={[11, -2, 0]} />
+      {/* Render "EVENTS" centered as a single row */}
+      <group position={[0, 0, 0]} rotation={[0, Math.PI / 1.5, 0]}>
+        <BoxLetter letter="E" position={[-7.5, 1, 0]} />
+        <BoxLetter letter="V" position={[-4.5, 1, 0]} />
+        <BoxLetter letter="E" position={[-1.5, 1, 0]} />
+        <BoxLetter letter="N" position={[1.5, 1, 0]} />
+        <BoxLetter letter="T" position={[4.5, 1, 0]} />
+        <BoxLetter letter="S" position={[7.5, 1, 0]} />
       </group>
       <OrbitControls
-  ref={orbitControlsRef}
-  enableZoom
-  enablePan
-  enableRotate
-  autoRotate
-  autoRotateSpeed={2}
-/>
-
+        ref={orbitControlsRef}
+        enableZoom
+        enablePan
+        enableRotate
+        autoRotate
+        autoRotateSpeed={2}
+      />
       <ambientLight intensity={0.5} />
       <directionalLight position={[5, 5, 5]} intensity={0.5} color="#ffffff" />
-
-      <Environment
-        files={
-          isMobileDevice
-            ? "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/download3-7FArHVIJTFszlXm2045mQDPzsZqAyo.jpg"
-            : "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/dither_it_M3_Drone_Shot_equirectangular-jpg_San_Francisco_Big_City_1287677938_12251179%20(1)-NY2qcmpjkyG6rDp1cPGIdX0bHk3hMR.jpg"
-        }
-        background
-      />
     </>
   );
 };
 
+// --- Main Component ---
 export default function Component() {
   return (
-    <div className="w-full h-screen bg-gray-900">
+    <div className="w-full h-[40vh] bg-white">
       <Canvas camera={{ position: [15, 0, -20], fov: 50 }}>
         <Scene />
       </Canvas>
@@ -245,7 +197,7 @@ export default function Component() {
   );
 }
 
-// Helper function to detect mobile devices
+// --- Helper function ---
 function isMobile() {
   if (typeof window === "undefined") return false;
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(

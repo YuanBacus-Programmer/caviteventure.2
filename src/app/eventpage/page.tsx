@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import dbConnect from "@/lib/dbConnect";
 import { getUserIdByToken } from "@/lib/auth";
 import Event, { IEvent } from "@/models/Event";
-import NextBlock from "@/components/nextblock/next-blocks"
+import Image from "next/image";
+import Events from "@/assets/newassets/eplore (1).png";
 
 export const runtime = "nodejs";
 
@@ -26,7 +27,16 @@ export default async function EventPage() {
 
   return (
     <main className="p-6">
-      <NextBlock/>
+      {/* Banner Image */}
+      <div className="relative w-full h-96 md:h-[600px] mb-6">
+        <Image
+          src={Events}
+          alt="Events Banner"
+          fill
+          quality={100}
+          className="object-cover"
+        />
+      </div>
 
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-2">Approved Events</h2>

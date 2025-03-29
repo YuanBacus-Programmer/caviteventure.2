@@ -1,30 +1,30 @@
-"use client";
+"use client"
 
-import { useRef, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { Merriweather } from "next/font/google";
+import { useRef, useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { motion, useScroll, useTransform } from "framer-motion"
+import { Merriweather } from "next/font/google"
 
-import ArrowIcon from "@/assets/headerimages/next.png";
-import cogImage from "@/assets/heroimages/cog.png";
+import ArrowIcon from "@/assets/headerimages/next.png"
+import cogImage from "@/assets/heroimages/cog.png"
 
 const merriweather = Merriweather({
   weight: "400",
   subsets: ["latin"],
   display: "swap",
-});
+})
 
 export default function Hero() {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const heroRef = useRef<HTMLElement>(null);
+  const [isModalOpen, setModalOpen] = useState(false)
+  const heroRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start end", "end start"],
-  });
+  })
 
   // Use translateY to apply scrolling effect
-  const translateY = useTransform(scrollYProgress, [0, 1], [80, -80]);
+  const translateY = useTransform(scrollYProgress, [0, 1], [80, -80])
 
   return (
     <section
@@ -51,14 +51,22 @@ export default function Hero() {
             </p>
             <div className="flex flex-col sm:flex-row gap-6 items-center mt-8">
               <Link href="/signup" className="w-full sm:w-auto">
-                <button className="btn btn-primary w-full sm:w-auto text-lg lg:text-xl xl:text-2xl">Explore for Free</button>
+                <button className="btn btn-primary w-full sm:w-auto text-lg lg:text-xl xl:text-2xl bg-[#5D4037] hover:bg-[#4E342E] text-[#F2E4C9] border-[#5D4037] hover:border-[#4E342E] transition-colors duration-300">
+                  Explore for Free
+                </button>
               </Link>
               <button
-                className="btn btn-text gap-3 flex items-center w-full sm:w-auto justify-center text-lg lg:text-xl xl:text-2xl"
+                className="btn btn-text gap-3 flex items-center w-full sm:w-auto justify-center text-lg lg:text-xl xl:text-2xl text-[#5D4037] hover:text-[#4E342E] transition-colors duration-300"
                 onClick={() => setModalOpen(true)}
               >
                 <span>Learn More</span>
-                <Image src={ArrowIcon} alt="Arrow icon" height={28} width={28} className="h-7 w-7 lg:h-10 lg:w-10" />
+                <Image
+                  src={ArrowIcon || "/placeholder.svg"}
+                  alt="Arrow icon"
+                  height={28}
+                  width={28}
+                  className="h-7 w-7 lg:h-10 lg:w-10"
+                />
               </button>
             </div>
           </motion.div>
@@ -73,11 +81,11 @@ export default function Hero() {
             <motion.div
               className="relative w-96 sm:w-[32rem] lg:w-[48rem] xl:w-[64rem] 4xl:w-[140rem]"
               animate={{ translateY: [-20, 20] }}
-              transition={{ repeat: Infinity, repeatType: "mirror", duration: 3, ease: "easeInOut" }}
-              style={{ y: translateY }} // ✅ Applied translateY
+              transition={{ repeat: Number.POSITIVE_INFINITY, repeatType: "mirror", duration: 3, ease: "easeInOut" }}
+              style={{ y: translateY }}
             >
               <Image
-                src={cogImage}
+                src={cogImage || "/placeholder.svg"}
                 alt="Innovation Cog"
                 className="rounded-lg"
                 placeholder="blur"
@@ -90,7 +98,7 @@ export default function Hero() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 z-50">
           <motion.div
             className="bg-white p-10 rounded-lg shadow-lg max-w-3xl w-full relative"
             initial={{ opacity: 0, scale: 0.8 }}
@@ -98,16 +106,29 @@ export default function Hero() {
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.3 }}
           >
-            <button className="absolute top-3 right-3 text-gray-700 hover:text-gray-900 text-xl" onClick={() => setModalOpen(false)}>
+            <button
+              className="absolute top-3 right-3 text-gray-700 hover:text-gray-900 text-xl"
+              onClick={() => setModalOpen(false)}
+            >
               &times;
             </button>
             <h2 className="text-4xl font-bold mb-6 text-center">About Cavite Venture</h2>
             <p className="text-xl text-gray-700 text-center">
-              Cavite Venture is an innovative platform promoting historical and attraction sites within Cavite. With interactive exhibits and an intuitive design, you can explore and trace your journey effortlessly.
+              Cavite Venture is an innovative platform promoting historical and attraction sites within Cavite. With
+              interactive exhibits and an intuitive design, you can explore and trace your journey effortlessly.
             </p>
+            <div className="mt-8 text-center">
+              <button
+                className="px-8 py-3 rounded-lg bg-[#5D4037] text-[#F2E4C9] hover:bg-[#4E342E] transition-colors duration-300"
+                onClick={() => setModalOpen(false)}
+              >
+                Close
+              </button>
+            </div>
           </motion.div>
         </div>
       )}
     </section>
-  );
+  )
 }
+

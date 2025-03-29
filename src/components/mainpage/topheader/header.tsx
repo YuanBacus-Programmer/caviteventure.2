@@ -1,43 +1,43 @@
-"use client";
+"use client"
 
-import React, { useState, useCallback, useEffect } from "react";
-import useSWR from "swr";
-import dynamic from "next/dynamic";
-import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useState, useCallback, useEffect } from "react"
+import useSWR from "swr"
+import dynamic from "next/dynamic"
+import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 // Dynamically import Lucide icons for no SSR usage
-const MenuIcon = dynamic(() => import("lucide-react").then((mod) => mod.Menu), { ssr: false });
-const CloseIcon = dynamic(() => import("lucide-react").then((mod) => mod.X), { ssr: false });
+const MenuIcon = dynamic(() => import("lucide-react").then((mod) => mod.Menu), { ssr: false })
+const CloseIcon = dynamic(() => import("lucide-react").then((mod) => mod.X), { ssr: false })
 
-import Logo from "@/assets/headerimages/logosaas.png";
-import arrowRightUrl from "@/assets/headerimages/next (1).png";
+import Logo from "@/assets/headerimages/logosaas.png"
+import arrowRightUrl from "@/assets/headerimages/next (1).png"
 
 // SWR fetcher
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function Header() {
-  const router = useRouter();
+  const router = useRouter()
 
   // Use SWR to fetch the auth status + user role in real time (poll every 5 seconds)
-  const { data, error, mutate } = useSWR("/api/auth/me", fetcher, { refreshInterval: 5000 });
-  const isAuthenticated = data?.isAuthenticated || false;
-  const userRole = data?.user?.role; // e.g. "admin" or "user"
+  const { data, error, mutate } = useSWR("/api/auth/me", fetcher, { refreshInterval: 5000 })
+  const isAuthenticated = data?.isAuthenticated || false
+  const userRole = data?.user?.role // e.g. "admin" or "user"
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isPromptOpen, setIsPromptOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isPromptOpen, setIsPromptOpen] = useState(false)
 
   // For mobile responsiveness: close menu if window is resized to desktop
   const handleResize = useCallback(() => {
-    if (window.innerWidth >= 768) setIsMenuOpen(false);
-  }, []);
+    if (window.innerWidth >= 768) setIsMenuOpen(false)
+  }, [])
 
   useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [handleResize]);
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [handleResize])
 
   return (
     <>
@@ -57,20 +57,20 @@ export default function Header() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 20, scale: 0.95 }}
                   transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                  className="bg-gradient-to-b from-[#faf1e0] to-[#f5e9d0] p-8 rounded-xl shadow-2xl border border-[#d9bc8b] w-full max-w-sm relative overflow-hidden"
+                  className="bg-gradient-to-b from-[#f5f0e5] to-[#e6d7c3] p-8 rounded-xl shadow-2xl border border-[#d7c3a7] w-full max-w-sm relative overflow-hidden"
                 >
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#8b5e3c] via-[#c4a484] to-[#8b5e3c]"></div>
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#654321] via-[#8B4513] to-[#654321]"></div>
 
                   <div className="mb-6 text-center">
                     <motion.div
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ delay: 0.2 }}
-                      className="mx-auto mb-4 bg-[#8b5e3c]/10 w-16 h-16 rounded-full flex items-center justify-center"
+                      className="mx-auto mb-4 bg-[#654321]/10 w-16 h-16 rounded-full flex items-center justify-center"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-8 w-8 text-[#8b5e3c]"
+                        className="h-8 w-8 text-[#654321]"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -87,7 +87,7 @@ export default function Header() {
                       initial={{ y: 10, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.3 }}
-                      className="text-[#5a3e1b] font-bold text-xl mb-2"
+                      className="text-[#654321] font-bold text-xl mb-2"
                     >
                       Sign in Required
                     </motion.h3>
@@ -95,7 +95,7 @@ export default function Header() {
                       initial={{ y: 10, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.4 }}
-                      className="text-[#7d5a3b] leading-relaxed"
+                      className="text-[#8B4513] leading-relaxed"
                     >
                       Please sign in to your account to view and register for our exclusive events and exhibitions.
                     </motion.p>
@@ -107,9 +107,18 @@ export default function Header() {
                     transition={{ delay: 0.5 }}
                     className="flex flex-col gap-3"
                   >
-                    <button
-                      onClick={() => router.push("/signin")}
-                      className="bg-[#8b5e3c] text-white px-4 py-3 rounded-lg hover:bg-[#6d4426] transition-all duration-300 font-medium flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                    <motion.button
+                      onClick={() => {
+                        setIsPromptOpen(false)
+                        router.push("/signin")
+                      }}
+                      className="bg-[#654321] text-[#f5f0e5] px-4 py-3 rounded-lg transition-all duration-300 font-medium flex items-center justify-center gap-2 shadow-md"
+                      whileHover={{
+                        backgroundColor: "#8B4513",
+                        scale: 1.02,
+                        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                      }}
+                      whileTap={{ scale: 0.98 }}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -126,18 +135,23 @@ export default function Header() {
                         />
                       </svg>
                       Sign In
-                    </button>
+                    </motion.button>
 
-                    <button
+                    <motion.button
                       onClick={() => router.push("/signup")}
-                      className="bg-transparent border border-[#8b5e3c] text-[#8b5e3c] px-4 py-3 rounded-lg hover:bg-[#8b5e3c]/10 transition-all duration-300 font-medium"
+                      className="bg-transparent border border-[#654321] text-[#654321] px-4 py-3 rounded-lg transition-all duration-300 font-medium"
+                      whileHover={{
+                        backgroundColor: "rgba(101, 67, 33, 0.1)",
+                        scale: 1.02,
+                      }}
+                      whileTap={{ scale: 0.98 }}
                     >
                       Create an Account
-                    </button>
+                    </motion.button>
                   </motion.div>
 
                   <motion.div
-                    className="absolute -bottom-12 -right-12 w-32 h-32 bg-[#c4a484]/10 rounded-full"
+                    className="absolute -bottom-12 -right-12 w-32 h-32 bg-[#8B4513]/10 rounded-full"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.6, duration: 0.5 }}
@@ -148,7 +162,7 @@ export default function Header() {
                     whileHover={{ scale: 1.1, rotate: 90 }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ type: "spring", stiffness: 300 }}
-                    className="absolute top-4 right-4 text-[#5a3e1b] hover:text-[#8b5e3c] bg-[#f5e9d0] rounded-full p-1.5 shadow-sm"
+                    className="absolute top-4 right-4 text-[#654321] hover:text-[#8B4513] bg-[#f5f0e5] rounded-full p-1.5 shadow-sm"
                     aria-label="Close dialog"
                   >
                     <svg
@@ -166,68 +180,44 @@ export default function Header() {
             )}
           </AnimatePresence>
 
-          <header className="sticky top-0 z-40 bg-[#faf1e0]/80 backdrop-blur-md shadow-md border-b border-[#c4a484]">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: "spring", stiffness: 50, duration: 0.5 }}
-              className="flex justify-center items-center py-3 bg-[#8b5e3c] text-white text-sm gap-3"
-            >
-              <p className="text-white/80 hidden md:block">
-                Explore CaviteVenture through history and culture
-              </p>
-              <Link href="/signup" className="inline-flex gap-1 items-center group">
-                <motion.p
-                  whileHover={{ color: "#c4a484" }}
-                  transition={{ duration: 0.2 }}
-                  className="font-bold uppercase"
-                >
-                  Get Started for Free
-                </motion.p>
-                <Image
-                  src={arrowRightUrl}
-                  alt="Arrow right icon"
-                  height={16}
-                  width={16}
-                  className="h-4 w-4"
-                  priority
-                />
-              </Link>
-            </motion.div>
-
+          <header className="sticky top-0 z-40 bg-[#f5f0e5]/80 backdrop-blur-md shadow-md border-b border-[#d7c3a7]">
             <div className="py-5 container mx-auto px-4 flex items-center justify-between">
               <Link href="/" className="flex items-center gap-2">
                 <Image
-                  src={Logo}
+                  src={Logo || "/placeholder.svg"}
                   alt="CaviteVenture Logo"
                   width={40}
                   height={40}
-                  className="rounded-lg border border-[#c4a484] shadow-md"
+                  className="rounded-lg border border-[#d7c3a7] shadow-md"
                   priority
                 />
-                <span className="text-lg font-bold text-[#5a3e1b]">CaviteVenture</span>
+                <span className="text-lg font-bold text-[#654321]">CaviteVenture</span>
               </Link>
 
-              <button
+              <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 text-[#5a3e1b] hover:bg-[#c4a484]/20 rounded-md"
+                className="md:hidden p-2 text-[#654321] hover:bg-[#d7c3a7]/20 rounded-md"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 {isMenuOpen ? <CloseIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
-              </button>
+              </motion.button>
 
-              <nav className="hidden md:flex gap-6 text-[#5a3e1b]/80 items-center">
+              <nav className="hidden md:flex gap-6 text-[#654321]/80 items-center">
                 {["Home", "About", "Events"].map((link) => (
-                  <button
+                  <motion.button
                     key={link}
                     onClick={() =>
                       link === "Events"
                         ? setIsPromptOpen(true)
                         : router.push(link === "Home" ? "/" : `/${link.toLowerCase()}`)
                     }
-                    className="font-bold uppercase hover:text-[#8b5e3c] transition"
+                    className="font-bold uppercase hover:text-[#8B4513] transition"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     {link}
-                  </button>
+                  </motion.button>
                 ))}
               </nav>
             </div>
@@ -237,86 +227,85 @@ export default function Header() {
 
       {/* ----------------------- PRIVATE NAVBAR: ADMIN ----------------------- */}
       {isAuthenticated && userRole === "admin" && (
-        <header className="sticky top-0 z-40 bg-[#faf1e0]/80 backdrop-blur-md shadow-md border-b border-[#c4a484]">
+        <header className="sticky top-0 z-40 bg-[#f5f0e5]/80 backdrop-blur-md shadow-md border-b border-[#d7c3a7]">
           <div className="py-5 container mx-auto px-4 flex items-center justify-between">
             <Link href="/dashboard" className="flex items-center gap-2">
               <Image
-                src={Logo}
+                src={Logo || "/placeholder.svg"}
                 alt="CaviteVenture Logo"
                 width={40}
                 height={40}
-                className="rounded-lg border border-[#c4a484] shadow-md"
+                className="rounded-lg border border-[#d7c3a7] shadow-md"
                 priority
               />
-              <span className="text-lg font-bold text-[#5a3e1b]">CaviteVenture</span>
+              <span className="text-lg font-bold text-[#654321]">CaviteVenture</span>
             </Link>
 
-            <button
+            <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-[#5a3e1b] hover:bg-[#c4a484]/20 rounded-md"
+              className="md:hidden p-2 text-[#654321] hover:bg-[#d7c3a7]/20 rounded-md"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
             >
               {isMenuOpen ? <CloseIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
-            </button>
+            </motion.button>
 
-            <nav className="hidden md:flex gap-6 text-[#5a3e1b]/80 items-center">
-              <Link
-                href="/dashboard"
-                className="font-bold uppercase hover:text-[#8b5e3c] transition"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/createevent"
-                className="font-bold uppercase hover:text-[#8b5e3c] transition"
-              >
-                Create Event
-              </Link>
-              <Link
-                href="/profilepage"
-                className="font-bold uppercase hover:text-[#8b5e3c] transition"
-              >
-                Profile
-              </Link>
+            <nav className="hidden md:flex gap-6 text-[#654321]/80 items-center">
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/dashboard" className="font-bold uppercase hover:text-[#8B4513] transition">
+                  Dashboard
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/createevent" className="font-bold uppercase hover:text-[#8B4513] transition">
+                  Create Event
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/profilepage" className="font-bold uppercase hover:text-[#8B4513] transition">
+                  Profile
+                </Link>
+              </motion.div>
             </nav>
           </div>
 
           <AnimatePresence>
             {isMenuOpen && (
               <motion.nav
-                initial={{ height: 0 }}
-                animate={{ height: "auto" }}
-                exit={{ height: 0 }}
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="md:hidden bg-[#faf1e0] border-t border-[#c4a484]"
+                className="md:hidden bg-[#f5f0e5] border-t border-[#d7c3a7]"
               >
-                <ul className="flex flex-col gap-4 p-4 text-[#5a3e1b]/80">
-                  <li>
+                <ul className="flex flex-col gap-4 p-4 text-[#654321]/80">
+                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
                     <Link
                       href="/dashboard"
-                      className="block font-bold uppercase hover:text-[#8b5e3c] transition"
+                      className="block font-bold uppercase transition"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Dashboard
                     </Link>
-                  </li>
-                  <li>
+                  </motion.li>
+                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
                     <Link
                       href="/createevent"
-                      className="block font-bold uppercase hover:text-[#8b5e3c] transition"
+                      className="block font-bold uppercase transition"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Create Event
                     </Link>
-                  </li>
-                  <li>
+                  </motion.li>
+                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
                     <Link
                       href="/profilepage"
-                      className="block font-bold uppercase hover:text-[#8b5e3c] transition"
+                      className="block font-bold uppercase transition"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Profile
                     </Link>
-                  </li>
+                  </motion.li>
                 </ul>
               </motion.nav>
             )}
@@ -326,101 +315,99 @@ export default function Header() {
 
       {/* ----------------------- PRIVATE NAVBAR: REGULAR USER ----------------------- */}
       {isAuthenticated && userRole !== "admin" && (
-        <header className="sticky top-0 z-40 bg-[#faf1e0]/80 backdrop-blur-md shadow-md border-b border-[#c4a484]">
+        <header className="sticky top-0 z-40 bg-[#f5f0e5]/80 backdrop-blur-md shadow-md border-b border-[#d7c3a7]">
           <div className="py-5 container mx-auto px-4 flex items-center justify-between">
             <Link href="/homepage" className="flex items-center gap-2">
               <Image
-                src={Logo}
+                src={Logo || "/placeholder.svg"}
                 alt="CaviteVenture Logo"
                 width={40}
                 height={40}
-                className="rounded-lg border border-[#c4a484] shadow-md"
+                className="rounded-lg border border-[#d7c3a7] shadow-md"
                 priority
               />
-              <span className="text-lg font-bold text-[#5a3e1b]">CaviteVenture</span>
+              <span className="text-lg font-bold text-[#654321]">CaviteVenture</span>
             </Link>
 
-            <button
+            <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-[#5a3e1b] hover:bg-[#c4a484]/20 rounded-md"
+              className="md:hidden p-2 text-[#654321] hover:bg-[#d7c3a7]/20 rounded-md"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
             >
               {isMenuOpen ? <CloseIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
-            </button>
+            </motion.button>
 
-            <nav className="hidden md:flex gap-6 text-[#5a3e1b]/80 items-center">
-              <Link
-                href="/homepage"
-                className="font-bold uppercase hover:text-[#8b5e3c] transition"
-              >
-                Home
-              </Link>
-              <Link
-                href="/eventpage"
-                className="font-bold uppercase hover:text-[#8b5e3c] transition"
-              >
-                Events
-              </Link>
-              <Link
-                href="/exhibitpage"
-                className="font-bold uppercase hover:text-[#8b5e3c] transition"
-              >
-                Exhibit
-              </Link>
-              <Link
-                href="/profilepage"
-                className="font-bold uppercase hover:text-[#8b5e3c] transition"
-              >
-                Profile
-              </Link>
+            <nav className="hidden md:flex gap-6 text-[#654321]/80 items-center">
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/homepage" className="font-bold uppercase hover:text-[#8B4513] transition">
+                  Home
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/eventpage" className="font-bold uppercase hover:text-[#8B4513] transition">
+                  Events
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/exhibitpage" className="font-bold uppercase hover:text-[#8B4513] transition">
+                  Exhibit
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Link href="/profilepage" className="font-bold uppercase hover:text-[#8B4513] transition">
+                  Profile
+                </Link>
+              </motion.div>
             </nav>
           </div>
 
           <AnimatePresence>
             {isMenuOpen && (
               <motion.nav
-                initial={{ height: 0 }}
-                animate={{ height: "auto" }}
-                exit={{ height: 0 }}
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="md:hidden bg-[#faf1e0] border-t border-[#c4a484]"
+                className="md:hidden bg-[#f5f0e5] border-t border-[#d7c3a7]"
               >
-                <ul className="flex flex-col gap-4 p-4 text-[#5a3e1b]/80">
-                  <li>
+                <ul className="flex flex-col gap-4 p-4 text-[#654321]/80">
+                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
                     <Link
                       href="/homepage"
-                      className="block font-bold uppercase hover:text-[#8b5e3c] transition"
+                      className="block font-bold uppercase transition"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Home
                     </Link>
-                  </li>
-                  <li>
+                  </motion.li>
+                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
                     <Link
                       href="/eventpage"
-                      className="block font-bold uppercase hover:text-[#8b5e3c] transition"
+                      className="block font-bold uppercase transition"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Events
                     </Link>
-                  </li>
-                  <li>
+                  </motion.li>
+                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
                     <Link
                       href="/exhibitpage"
-                      className="block font-bold uppercase hover:text-[#8b5e3c] transition"
+                      className="block font-bold uppercase transition"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Exhibit
                     </Link>
-                  </li>
-                  <li>
+                  </motion.li>
+                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
                     <Link
                       href="/profilepage"
-                      className="block font-bold uppercase hover:text-[#8b5e3c] transition"
+                      className="block font-bold uppercase transition"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Profile
                     </Link>
-                  </li>
+                  </motion.li>
                 </ul>
               </motion.nav>
             )}
@@ -428,5 +415,5 @@ export default function Header() {
         </header>
       )}
     </>
-  );
+  )
 }

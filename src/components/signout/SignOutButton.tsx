@@ -34,12 +34,12 @@ export default function SignOutButton() {
       <button
         onClick={handleSignOut}
         disabled={isLoading}
-        className="px-4 py-2 bg-[#8d6e63] hover:bg-[#5d4037] text-white rounded-lg transition-all duration-200 font-medium shadow-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+        className="px-4 py-2 bg-[#8B4513] hover:bg-[#654321] text-[#f5f0e5] rounded-lg transition-all duration-200 font-medium shadow-sm flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
       >
         {isLoading ? (
           <>
             <svg
-              className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+              className="animate-spin -ml-1 mr-2 h-4 w-4 text-[#f5f0e5]"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -76,7 +76,7 @@ export default function SignOutButton() {
 
       {status && (
         <div className="absolute top-full right-0 mt-2 w-full max-w-xs">
-          <div className="bg-[#f8f5f0] border border-[#e6dfd3] text-[#5d4037] px-4 py-3 rounded-lg shadow-md text-sm">
+          <div className="bg-[#f5f0e5] border border-[#e6d7c3] text-[#654321] px-4 py-3 rounded-lg shadow-md text-sm">
             {status}
           </div>
         </div>

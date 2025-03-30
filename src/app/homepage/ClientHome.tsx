@@ -1,55 +1,165 @@
 "use client";
 
-import { useState } from "react";
-import DynamicFrameLayout from "@/components/dynamic/DynamicFrameLayout"; // Default import
-import { ppEditorialNewUltralightItalic, inter } from "@/app/fonts";
-import Link from "next/link";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Zapote from "@/assets/heroimages/cog.png";
+import SanRoque from "@/assets/heroimages/cylinder.png";
+import Binakayan from "@/assets/heroimages/noodle.png";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import BinakayanPage from "@/components/homepage/binakayan";
+import ZapotePage from "@/components/homepage/zapote";
 
 export default function ClientHome() {
-  const [headerSize] = useState(1.2); // 120% is the default size
-  const [textSize] = useState(0.8); // 80% is the default size
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+
+  const slides = [
+    {
+      image: Zapote,
+      name: "Zapote",
+      date: "January 15, 2022",
+      alt: "Zapote image",
+    },
+    {
+      image: SanRoque,
+      name: "San Roque",
+      date: "March 8, 2021",
+      alt: "San Roque image",
+    },
+    {
+      image: Binakayan,
+      name: "Binakayan",
+      date: "November 30, 2020",
+      alt: "Binakayan image",
+    },
+  ];
+
+  const nextSlide = () => {
+    setDirection(1);
+    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevSlide = () => {
+    setDirection(-1);
+    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  };
+
+  const goToSlide = (index: number) => {
+    setDirection(index > currentSlide ? 1 : -1);
+    setCurrentSlide(index);
+  };
+
+  // Auto-advance slides every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div
-      className={`min-h-screen bg-white flex items-center justify-center p-8 ${ppEditorialNewUltralightItalic.variable} ${inter.variable}`}
-    >
-      <div className="w-full h-full flex flex-col md:flex-row items-start gap-8 md:gap-8">
-        {/* Left Content - Sand Background */}
-        <div className="w-full md:w-[260px] flex-shrink-0 flex flex-col justify-between h-full bg-[#F4E1C1] p-4 rounded-md">
-          <div className="flex flex-col gap-16">
-            <h1
-              className={`${ppEditorialNewUltralightItalic.className} text-4xl md:text-6xl font-light italic text-gray-900 tracking-tighter leading-[130%]`}
-              style={{ fontSize: `${4 * headerSize}rem` }}
-            >
-              Cavite
-              <br />
-              Venture
-              <br />
-            </h1>
-            <div
-              className={`${inter.className} flex flex-col gap-12 text-gray-700 text-sm font-light max-w-[300px]`}
-              style={{ fontSize: `${0.875 * textSize}rem` }}
-            >
-              <div className="space-y-6">
-                <div className="h-px bg-gray-300 w-full" />
-                <p>
-                  Join Caviteventure on a creative odyssey! We're seeking a visionary Brand Designer who dares to redefine what a brand can be. At Caviteventure, you'll transform ideas into striking visual stories that captivate audiences across every touchpoint—from immersive product designs and dynamic social media experiences to bold marketing campaigns. Collaborate with a passionate, forward-thinking team, harness cutting-edge insights, and let your creativity pave the way for a brand that's not just seen, but truly felt. If you're ready to push boundaries and be at the forefront of a revolutionary brand adventure, your journey starts here.
-                </p>
-                <p>
-                  At Caviteventure, you'll blend graphic, motion, and web design with expert video production and editing, harnessing both time-honored techniques and groundbreaking tools to craft visuals that captivate, inspire, and leave a lasting impact.
-                </p>
-                <p>Here are some of our favorite works so far.</p>
-                <div className="h-px bg-gray-300 w-full" />
-              </div>
+    <>
+      <div className="relative w-full h-screen overflow-hidden">
+        {/* Carousel slides */}
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+              currentSlide === index
+                ? "opacity-100 translate-x-0"
+                : index < currentSlide ||
+                  (currentSlide === 0 && index === slides.length - 1)
+                ? "opacity-0 -translate-x-full"
+                : "opacity-0 translate-x-full"
+            }`}
+          >
+            {/* Image with overlay */}
+            <div className="relative w-full h-full">
+              <Image
+                src={slide.image}
+                alt={slide.alt}
+                fill
+                className={`object-cover transition-transform duration-1500 ${
+                  currentSlide === index ? "scale-105 animate-slow-zoom" : ""
+                }`}
+                priority
+              />
+              <div className="absolute inset-0 bg-black/40" />
+            </div>
+
+            {/* Content with animations */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4">
+              <p
+                className={`text-sm md:text-base opacity-80 mb-2 transition-all duration-1000 delay-300 ${
+                  currentSlide === index
+                    ? "translate-y-0 opacity-80"
+                    : "translate-y-10 opacity-0"
+                }`}
+              >
+                {slide.date}
+              </p>
+              <h2
+                className={`text-4xl md:text-6xl lg:text-7xl font-bold mb-8 transition-all duration-1000 delay-500 ${
+                  currentSlide === index
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-10 opacity-0"
+                }`}
+              >
+                {slide.name}
+              </h2>
+              <Button
+                variant="outline"
+                className={`bg-transparent border border-white text-white hover:bg-white hover:text-black transition-all duration-1000 delay-700 ${
+                  currentSlide === index
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-10 opacity-0"
+                }`}
+              >
+                READ MORE
+              </Button>
             </div>
           </div>
-        </div>
+        ))}
 
-        {/* Right Content - White Background */}
-        <div className="w-full md:flex-grow h-[60vh] md:h-[80vh] bg-white p-4 rounded-md">
-          <DynamicFrameLayout />
+        {/* Navigation arrows */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition-all"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft size={24} />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition-all"
+          aria-label="Next slide"
+        >
+          <ChevronRight size={24} />
+        </button>
+
+        {/* Dots navigation */}
+        <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-2">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                currentSlide === index ? "bg-white w-4" : "bg-white/50"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
         </div>
       </div>
-    </div>
+
+      {/* BinakayanPage component below the carousel */}
+      <div className="mt-8">
+        <BinakayanPage />
+      </div>
+      <div className="mt-8">
+        <ZapotePage />
+      </div>
+    </>
   );
 }

@@ -3,7 +3,6 @@
 import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import { Eye, EyeOff, Mail, User, MapPin, UserPlus } from "lucide-react"
 
 export default function SignUpForm() {
@@ -18,6 +17,7 @@ export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [status, setStatus] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -215,12 +215,13 @@ export default function SignUpForm() {
               </div>
               <label htmlFor="terms" className="text-sm text-[#5d4037]">
                 I accept the{" "}
-                <Link
-                  href="#"
+                <button
+                  type="button"
+                  onClick={() => setIsTermsModalOpen(true)}
                   className="text-[#8d6e63] hover:text-[#5d4037] hover:underline transition-colors font-medium"
                 >
                   Terms and Conditions
-                </Link>
+                </button>
               </label>
             </div>
 
@@ -268,15 +269,59 @@ export default function SignUpForm() {
             <div className="text-center pt-2">
               <p className="text-[#8d6e63] text-sm">
                 Already have an account?{" "}
-                <Link href="/signin" className="text-[#5d4037] font-medium hover:underline transition-colors">
+                <a href="/signin" className="text-[#5d4037] font-medium hover:underline transition-colors">
                   Sign in
-                </Link>
+                </a>
               </p>
             </div>
           </form>
         </div>
       </div>
+
+      {/* Modal for Terms and Conditions */}
+      {isTermsModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          {/* Modal overlay */}
+          <div 
+            className="fixed inset-0 bg-black opacity-50" 
+            onClick={() => setIsTermsModalOpen(false)}
+          ></div>
+          {/* Modal content */}
+          <div className="bg-white rounded-lg shadow-lg p-6 z-50 max-w-lg w-full mx-4">
+            <h2 className="text-2xl font-bold mb-4">Cavite Venture Terms &amp; Conditions</h2>
+            <div className="overflow-y-auto max-h-80 text-sm text-[#5d4037]">
+              <p className="mb-2">
+                Welcome to Cavite Venture. By using our services, you agree to the following terms and conditions. Please read them carefully.
+              </p>
+              <p className="mb-2">
+                1. <strong>Acceptance of Terms:</strong> Your use of our platform constitutes your acceptance of these terms.
+              </p>
+              <p className="mb-2">
+                2. <strong>Account Responsibility:</strong> You are responsible for maintaining the confidentiality of your account.
+              </p>
+              <p className="mb-2">
+                3. <strong>Data Usage:</strong> Your personal data will be processed in accordance with our privacy policy.
+              </p>
+              <p className="mb-2">
+                4. <strong>Service Modifications:</strong> We reserve the right to modify or discontinue services at any time.
+              </p>
+              <p className="mb-2">
+                5. <strong>Limitation of Liability:</strong> Cavite Venture is not liable for any direct, indirect, or consequential damages arising from your use of our services.
+              </p>
+              <p className="mb-2">
+                By continuing, you acknowledge that you have read, understood, and agreed to these terms and conditions.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsTermsModalOpen(false)}
+              className="mt-4 py-2 px-4 bg-[#8d6e63] hover:bg-[#5d4037] text-white font-medium rounded transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-

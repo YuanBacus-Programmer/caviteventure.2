@@ -4,6 +4,7 @@ import "./globals.css";
 import { LoadingAnimation } from "@/components/loadinganimation/loadingscreen";
 import Header from "@/components/mainpage/topheader/header";
 import Footer from "@/components/mainpage/buttomfooter/footer";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +56,7 @@ function LoadingWrapper({ children }: { children: React.ReactNode }) {
         <LoadingAnimation />
       </div>
       <div id="content" className="hidden">
+      <SpeedInsights/>
         <Header/>
         {children}
         <Footer/>

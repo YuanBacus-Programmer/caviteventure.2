@@ -1,4 +1,3 @@
-// File: app/api/auth/signup/route.ts
 export const runtime = "nodejs"; // needed if you use Node modules in Edge by default
 
 import { NextRequest, NextResponse } from "next/server";
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     await dbConnect();
 
-    // Check if user with same name or email already exists
+    // Check if a user with the same name or email already exists
     const existingName = await User.findOne({ name });
     if (existingName) {
       return NextResponse.json({ message: "A user with that name already exists." }, { status: 400 });
@@ -37,12 +36,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "A user with that email already exists." }, { status: 400 });
     }
 
-    // Hash password
+    // Hash password and generate a 6-digit verification code
     const hashedPassword = await bcrypt.hash(password, 10);
-    // Generate 6-digit code
     const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Create user doc
+    // Create the user document
     await User.create({
       name,
       email,
@@ -53,7 +51,7 @@ export async function POST(req: NextRequest) {
       verifyCode,
     });
 
-    // Send verification email
+    // Send verification email using nodemailer
     await sendVerificationEmail(email, verifyCode);
 
     return NextResponse.json(

@@ -1,62 +1,62 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { Calendar, MapPin, Image, Upload, X, Loader2 } from "lucide-react"
+import type React from "react";
+import { useState } from "react";
+import { Calendar, MapPin, Image, Upload, X, Loader2 } from "lucide-react";
 
 export default function CreateEventClient() {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [date, setDate] = useState("")
-  const [location, setLocation] = useState("")
-  const [image, setImage] = useState<string>("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState("");
+  const [location, setLocation] = useState("");
+  const [image, setImage] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   // Helper to read file as base64
   async function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => resolve(reader.result as string)
-      reader.onerror = (err) => reject(err)
-    })
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (err) => reject(err);
+    });
   }
 
   // Trigger the hidden file input
   const handleChooseImageClick = () => {
-    document.getElementById("eventImageInput")?.click()
-  }
+    document.getElementById("eventImageInput")?.click();
+  };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (!file) {
-      setImage("")
-      return
+      setImage("");
+      return;
     }
     try {
-      const base64 = await fileToBase64(file)
-      setImage(base64)
+      const base64 = await fileToBase64(file);
+      setImage(base64);
     } catch (err) {
-      console.error("Failed to convert file:", err)
-      setError("Failed to upload image")
+      console.error("Failed to convert file:", err);
+      setError("Failed to upload image");
     }
-  }
+  };
 
   const handleRemoveImage = () => {
-    setImage("")
+    setImage("");
     // Reset the file input
-    const fileInput = document.getElementById("eventImageInput") as HTMLInputElement
-    if (fileInput) fileInput.value = ""
-  }
+    const fileInput = document.getElementById("eventImageInput") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setSuccess("")
-    setIsSubmitting(true)
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setIsSubmitting(true);
 
     try {
       const res = await fetch("/api/admin/createevent", {
@@ -68,45 +68,50 @@ export default function CreateEventClient() {
           date,
           location,
           image,
+          // We expect the server to set { status: "pending" } behind the scenes
         }),
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Failed to create event")
-        return
+        setError(data.error || "Failed to create event");
+        return;
       }
 
       // Show success message
-      setSuccess(`Event "${data.event.title}" created successfully!`)
-
+      setSuccess(`Event "${data.event.title}" created successfully!`);
       // Reset the form
-      setTitle("")
-      setDescription("")
-      setDate("")
-      setLocation("")
-      setImage("")
+      setTitle("");
+      setDescription("");
+      setDate("");
+      setLocation("");
+      setImage("");
     } catch (err) {
-      console.error("Error creating event:", err)
-      setError("Something went wrong.")
+      console.error("Error creating event:", err);
+      setError("Something went wrong.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto p-4 sm:p-6 md:p-8">
       <div className="bg-white rounded-xl shadow-md overflow-hidden border border-[#e6dfd3]">
         <div className="p-6 pb-0">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#5d4037] mb-2">Create Event</h1>
-          <p className="text-[#8d6e63] mb-6">Fill in the details to create a new event</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#5d4037] mb-2">
+            Create Event
+          </h1>
+          <p className="text-[#8d6e63] mb-6">
+            Fill in the details to create a new event
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">{error}</div>
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
           )}
-
           {success && (
             <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
               {success}
@@ -190,7 +195,9 @@ export default function CreateEventClient() {
 
           {/* Image Upload */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-[#5d4037]">Event Image</label>
+            <label className="block text-sm font-medium text-[#5d4037]">
+              Event Image
+            </label>
 
             <div className="mt-1 flex items-center gap-4">
               <button
@@ -202,7 +209,6 @@ export default function CreateEventClient() {
                 Choose Image
               </button>
 
-              {/* Hidden file input */}
               <input
                 type="file"
                 id="eventImageInput"
@@ -223,7 +229,6 @@ export default function CreateEventClient() {
               )}
             </div>
 
-            {/* Show preview if an image is selected */}
             {image && (
               <div className="mt-4 relative">
                 <div className="bg-[#f8f5f0] p-2 rounded-lg border border-[#e6dfd3]">
@@ -232,7 +237,11 @@ export default function CreateEventClient() {
                     Image Preview
                   </p>
                   <div className="relative rounded-lg overflow-hidden bg-white">
-                    <img src={image || "/placeholder.svg"} alt="Event preview" className="w-full h-48 object-cover" />
+                    <img
+                      src={image || "/placeholder.svg"}
+                      alt="Event preview"
+                      className="w-full h-48 object-cover"
+                    />
                   </div>
                 </div>
               </div>
@@ -262,6 +271,5 @@ export default function CreateEventClient() {
         </form>
       </div>
     </div>
-  )
+  );
 }
-

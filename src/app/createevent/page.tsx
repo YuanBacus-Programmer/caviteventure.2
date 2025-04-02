@@ -9,22 +9,23 @@ import { getUserIdByToken } from "@/lib/auth";
 import User from "@/models/User";
 
 export default async function CreateEventPage() {
+  // Build a cookie header string for our internal fetch
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
   const cookieHeader = allCookies
     .map(({ name, value }: { name: string; value: string }) => `${name}=${value}`)
     .join("; ");
 
-  // Build absolute URL
+  // Build the absolute URL for /api/auth/me
   const baseUrl =
     process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000";
 
-  // Verify admin via /api/auth/me
+  // 1) Check if user is authenticated + admin via /api/auth/me
   const authRes = await fetch(`${baseUrl}/api/auth/me`, {
     headers: { cookie: cookieHeader },
-    cache: "no-store",
+    cache: "no-store", // ensure we always get the latest
   });
   const authData = await authRes.json();
 
@@ -32,13 +33,13 @@ export default async function CreateEventPage() {
     redirect("/signin");
   }
 
-  // Additional DB check
+  // 2) Extra DB check (optional)
   await dbConnect();
   const isAdminUser = await User.findById(authData.user._id).lean();
   if (!isAdminUser || isAdminUser.role !== "admin") {
     redirect("/signin");
   }
 
-  // Render the Create Event form
+  // 3) If admin, render the client form
   return <CreateEventClient />;
 }

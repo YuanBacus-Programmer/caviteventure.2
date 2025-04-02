@@ -11,16 +11,15 @@ export default async function DashboardPage() {
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
   const cookieHeader = allCookies
-    .map(({ name, value }: { name: string; value: string }) => `${name}=${value}`)
+    .map(({ name, value }) => `${name}=${value}`)
     .join("; ");
 
   // Build absolute URL using VERCEL_URL or fallback to localhost
-  const baseUrl =
-    process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000";
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
 
-  // Verify user is admin via /api/auth/me using absolute URL
+  // 1) Verify user is admin via /api/auth/me
   const authRes = await fetch(`${baseUrl}/api/auth/me`, {
     headers: { cookie: cookieHeader },
     cache: "no-store",
@@ -31,7 +30,7 @@ export default async function DashboardPage() {
     redirect("/signin");
   }
 
-  // Fetch additional dashboard data
+  // 2) Fetch additional dashboard data
   await dbConnect();
   const dashRes = await fetch(`${baseUrl}/api/admin/dashboard`, {
     headers: { cookie: cookieHeader },
@@ -43,6 +42,18 @@ export default async function DashboardPage() {
     redirect("/signin");
   }
 
-  // Render client component
-  return <AdminDashboardClient dashboardData={dashData.data} />;
+  // Provide safe defaults in case some fields are missing
+  const finalData = {
+    totalUsers: dashData.data?.totalUsers ?? 0,
+    totalMale: dashData.data?.totalMale ?? 0,
+    totalFemale: dashData.data?.totalFemale ?? 0,
+    logs: dashData.data?.logs ?? [],
+    events: dashData.data?.events ?? [],
+    comments: dashData.data?.comments ?? [],
+    allUsers: dashData.data?.allUsers ?? [],
+    admins: dashData.data?.admins ?? [],
+  };
+
+  // Render client component, passing the final data
+  return <AdminDashboardClient dashboardData={finalData} />;
 }

@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   LayoutDashboard,
   MessageSquare,
@@ -13,55 +13,55 @@ import {
   BarChart3,
   Calendar,
   User,
-} from "lucide-react"
+} from "lucide-react";
+import { useRouter } from "next/navigation"; // For router.refresh()
 
-interface DashboardData {
-  totalUsers: number
-  totalMale: number
-  totalFemale: number
-  logs: any[]
-  events: any[]
-  comments: any[]
-  allUsers: any[]
-  admins: any[]
+interface IDashboardData {
+  totalUsers: number;
+  totalMale: number;
+  totalFemale: number;
+  logs: any[];
+  events: any[];
+  comments: any[];
+  allUsers: any[];
+  admins: any[];
 }
 
 export default function AdminDashboardClient({
   dashboardData,
 }: {
-  dashboardData?: DashboardData
+  dashboardData?: Partial<IDashboardData>;
 }) {
-  // Provide a fallback in case dashboardData is undefined
-  const safeDashboardData: DashboardData = dashboardData ?? {
-    totalUsers: 0,
-    totalMale: 0,
-    totalFemale: 0,
-    logs: [],
-    events: [],
-    comments: [],
-    allUsers: [],
-    admins: [],
-  }
+  // Safely destructure with defaults
+  const {
+    totalUsers = 0,
+    totalMale = 0,
+    totalFemale = 0,
+    logs = [],
+    events = [],
+    comments = [],
+    allUsers = [],
+    admins = [],
+  } = dashboardData || {};
 
-  const { totalUsers, totalMale, totalFemale, logs, events, comments, allUsers, admins } = safeDashboardData
+  const router = useRouter();
 
   // Filter arrays:
-  // For "All Users" tab, show only users whose role is not "admin".
-  const filteredUsers = allUsers.filter((usr) => usr.role !== "admin")
-  // For "Admins" tab, show only users with role "admin".
-  const filteredAdmins = admins.filter((adm) => adm.role === "admin")
+  const filteredUsers = allUsers.filter((usr) => usr.role !== "admin");
+  const filteredAdmins = admins.filter((adm) => adm.role === "admin");
 
   // Which sidebar section is active
-  const [activeSection, setActiveSection] = useState<"overview" | "comments-events" | "all-users" | "all-admins">(
-    "overview",
-  )
+  const [activeSection, setActiveSection] = useState<
+    "overview" | "comments-events" | "all-users" | "all-admins"
+  >("overview");
 
   // Mobile sidebar toggle
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Function to update a user's role to admin
+  // Update a user's role to admin
   const handleMakeAdmin = async (userId: string) => {
-    if (!confirm("Are you sure you want to change this user's role to admin?")) return
+    if (!confirm("Are you sure you want to change this user's role to admin?"))
+      return;
     try {
       const response = await fetch(`/api/admin/users/${userId}`, {
         method: "PATCH",
@@ -69,61 +69,68 @@ export default function AdminDashboardClient({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ role: "admin" }),
-      })
+      });
       if (!response.ok) {
-        const data = await response.json()
-        alert(data.error || "Failed to update user role")
-        return
+        const data = await response.json();
+        alert(data.error || "Failed to update user role");
+        return;
       }
-      alert("User role updated to admin successfully!")
-      window.location.reload()
+      alert("User role updated to admin successfully!");
+      // Use router.refresh() to re-fetch server data & re-render
+      router.refresh();
     } catch (error) {
-      console.error("Error updating user role:", error)
-      alert("Error updating user role.")
+      console.error("Error updating user role:", error);
+      alert("Error updating user role.");
     }
-  }
+  };
 
-  // ─── EVENT ACTIONS: EDIT & DELETE ─────────────────────────────────────────────
+  // EVENT ACTIONS: EDIT & DELETE
   const handleEditEvent = (eventData: any) => {
-    console.log("Editing event:", eventData)
-    window.location.href = `/updateevent/${eventData._id}`
-  }
+    console.log("Editing event:", eventData);
+    // Optionally use Next router for navigation:
+    // router.push(`/updateevent/${eventData._id}`);
+    window.location.href = `/updateevent/${eventData._id}`;
+  };
 
   const handleDeleteEvent = async (eventId: string) => {
-    if (!confirm("Are you sure you want to delete this event?")) return
+    if (!confirm("Are you sure you want to delete this event?")) return;
 
-    console.log("Deleting event:", eventId)
     try {
       const response = await fetch(`/api/admin/events/${eventId}`, {
         method: "DELETE",
-      })
-      const data = await response.json()
+      });
+      const data = await response.json();
       if (!response.ok) {
-        alert(data.error || "Failed to delete event")
-        return
+        alert(data.error || "Failed to delete event");
+        return;
       }
-      alert("Event deleted successfully!")
-      window.location.reload()
+      alert("Event deleted successfully!");
+      // Re-fetch updated data
+      router.refresh();
     } catch (error) {
-      console.error("Delete event error:", error)
-      alert("Error deleting event.")
+      console.error("Delete event error:", error);
+      alert("Error deleting event.");
     }
-  }
+  };
 
-  //
-  // ─── RENDER CONTENT ──────────────────────────────────────────────────────────
-  //
+  // RENDER CONTENT
   const renderContent = () => {
     switch (activeSection) {
       case "overview":
         return (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl md:text-2xl font-bold text-[#5d4037]">Dashboard Overview</h2>
-              <span className="text-sm text-[#8d6e63]">Last updated: {new Date().toLocaleDateString()}</span>
+              <h2 className="text-xl md:text-2xl font-bold text-[#5d4037]">
+                Dashboard Overview
+              </h2>
+              <span className="text-sm text-[#8d6e63]">
+                Last updated: {new Date().toLocaleDateString()}
+              </span>
             </div>
 
+            {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {/* TOTAL USERS */}
               <div className="bg-white rounded-lg shadow-md p-5 border border-[#e6dfd3] transition-all duration-200 hover:shadow-lg">
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium text-[#5d4037]">Total Users</h3>
@@ -131,10 +138,15 @@ export default function AdminDashboardClient({
                     <Users size={20} className="text-[#8d6e63]" />
                   </div>
                 </div>
-                <p className="text-3xl font-bold mt-2 text-[#5d4037]">{totalUsers}</p>
-                <p className="text-sm text-[#8d6e63] mt-1">Registered accounts</p>
+                <p className="text-3xl font-bold mt-2 text-[#5d4037]">
+                  {totalUsers}
+                </p>
+                <p className="text-sm text-[#8d6e63] mt-1">
+                  Registered accounts
+                </p>
               </div>
 
+              {/* MALE USERS */}
               <div className="bg-white rounded-lg shadow-md p-5 border border-[#e6dfd3] transition-all duration-200 hover:shadow-lg">
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium text-[#5d4037]">Male Users</h3>
@@ -142,10 +154,18 @@ export default function AdminDashboardClient({
                     <User size={20} className="text-[#8d6e63]" />
                   </div>
                 </div>
-                <p className="text-3xl font-bold mt-2 text-[#5d4037]">{totalMale}</p>
-                <p className="text-sm text-[#8d6e63] mt-1">{Math.round((totalMale / totalUsers) * 100)}% of users</p>
+                <p className="text-3xl font-bold mt-2 text-[#5d4037]">
+                  {totalMale}
+                </p>
+                <p className="text-sm text-[#8d6e63] mt-1">
+                  {totalUsers > 0
+                    ? Math.round((totalMale / totalUsers) * 100)
+                    : 0}
+                  % of users
+                </p>
               </div>
 
+              {/* FEMALE USERS */}
               <div className="bg-white rounded-lg shadow-md p-5 border border-[#e6dfd3] transition-all duration-200 hover:shadow-lg">
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium text-[#5d4037]">Female Users</h3>
@@ -153,12 +173,19 @@ export default function AdminDashboardClient({
                     <User size={20} className="text-[#8d6e63]" />
                   </div>
                 </div>
-                <p className="text-3xl font-bold mt-2 text-[#5d4037]">{totalFemale}</p>
-                <p className="text-sm text-[#8d6e63] mt-1">{Math.round((totalFemale / totalUsers) * 100)}% of users</p>
+                <p className="text-3xl font-bold mt-2 text-[#5d4037]">
+                  {totalFemale}
+                </p>
+                <p className="text-sm text-[#8d6e63] mt-1">
+                  {totalUsers > 0
+                    ? Math.round((totalFemale / totalUsers) * 100)
+                    : 0}
+                  % of users
+                </p>
               </div>
             </div>
 
-            {/* Logs Table */}
+            {/* LOGS TABLE */}
             <div className="bg-white rounded-lg shadow-md p-5 border border-[#e6dfd3]">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-[#5d4037] flex items-center">
@@ -173,16 +200,29 @@ export default function AdminDashboardClient({
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="bg-[#f8f5f0] text-[#5d4037]">
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">User Name</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Email</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Location</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Action</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Timestamp</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        User Name
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Email
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Location
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Action
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Timestamp
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {logs.map((log, idx) => (
-                      <tr key={idx} className="hover:bg-[#f8f5f0] transition-colors">
+                      <tr
+                        key={idx}
+                        className="hover:bg-[#f8f5f0] transition-colors"
+                      >
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3] text-[#5d4037]">
                           {log.userId?.name || "Unknown"}
                         </td>
@@ -204,7 +244,10 @@ export default function AdminDashboardClient({
                     ))}
                     {logs.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="px-4 py-3 text-center text-[#8d6e63]">
+                        <td
+                          colSpan={5}
+                          className="px-4 py-3 text-center text-[#8d6e63]"
+                        >
                           No logs found
                         </td>
                       </tr>
@@ -214,12 +257,14 @@ export default function AdminDashboardClient({
               </div>
             </div>
           </div>
-        )
-
+        );
       case "comments-events":
         return (
           <div className="space-y-6">
-            <h2 className="text-xl md:text-2xl font-bold text-[#5d4037]">Comments &amp; Events</h2>
+            <h2 className="text-xl md:text-2xl font-bold text-[#5d4037]">
+              Comments &amp; Events
+            </h2>
+
             {/* Comments Table */}
             <div className="bg-white rounded-lg shadow-md p-5 border border-[#e6dfd3]">
               <div className="flex items-center justify-between mb-4">
@@ -235,16 +280,29 @@ export default function AdminDashboardClient({
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="bg-[#f8f5f0] text-[#5d4037]">
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">User</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Email</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Event</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Comment</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Date</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        User
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Email
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Event
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Comment
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Date
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {comments.map((cmt, idx) => (
-                      <tr key={idx} className="hover:bg-[#f8f5f0] transition-colors">
+                      <tr
+                        key={idx}
+                        className="hover:bg-[#f8f5f0] transition-colors"
+                      >
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3] text-[#5d4037]">
                           {cmt.userId?.name}
                         </td>
@@ -264,7 +322,10 @@ export default function AdminDashboardClient({
                     ))}
                     {comments.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="px-4 py-3 text-center text-[#8d6e63]">
+                        <td
+                          colSpan={5}
+                          className="px-4 py-3 text-center text-[#8d6e63]"
+                        >
                           No comments found
                         </td>
                       </tr>
@@ -289,21 +350,36 @@ export default function AdminDashboardClient({
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="bg-[#f8f5f0] text-[#5d4037]">
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Title</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Description</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Date</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Location</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Actions</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Title
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Description
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Date
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Location
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {events.map((ev) => (
-                      <tr key={ev._id} className="hover:bg-[#f8f5f0] transition-colors">
+                      <tr
+                        key={ev._id}
+                        className="hover:bg-[#f8f5f0] transition-colors"
+                      >
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3] text-[#5d4037] font-medium">
                           {ev.title}
                         </td>
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3] text-[#5d4037]">
-                          {ev.description.length > 50 ? `${ev.description.substring(0, 50)}...` : ev.description}
+                          {ev.description.length > 50
+                            ? `${ev.description.substring(0, 50)}...`
+                            : ev.description}
                         </td>
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3] text-[#5d4037]">
                           {new Date(ev.date).toLocaleDateString()}
@@ -333,7 +409,10 @@ export default function AdminDashboardClient({
                     ))}
                     {events.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="px-4 py-3 text-center text-[#8d6e63]">
+                        <td
+                          colSpan={5}
+                          className="px-4 py-3 text-center text-[#8d6e63]"
+                        >
                           No events found
                         </td>
                       </tr>
@@ -343,12 +422,14 @@ export default function AdminDashboardClient({
               </div>
             </div>
           </div>
-        )
+        );
       case "all-users":
         return (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl md:text-2xl font-bold text-[#5d4037]">All Users</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-[#5d4037]">
+                All Users
+              </h2>
               <span className="text-sm text-[#8d6e63] bg-[#f8f5f0] px-3 py-1 rounded-full">
                 {filteredUsers.length} users
               </span>
@@ -358,17 +439,32 @@ export default function AdminDashboardClient({
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="bg-[#f8f5f0] text-[#5d4037]">
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Name</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Email</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Gender</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Location</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Role</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Actions</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Name
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Email
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Gender
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Location
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Role
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredUsers.map((usr, idx) => (
-                      <tr key={idx} className="hover:bg-[#f8f5f0] transition-colors">
+                      <tr
+                        key={idx}
+                        className="hover:bg-[#f8f5f0] transition-colors"
+                      >
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3] text-[#5d4037] font-medium">
                           {usr.name}
                         </td>
@@ -400,7 +496,10 @@ export default function AdminDashboardClient({
                     ))}
                     {filteredUsers.length === 0 && (
                       <tr>
-                        <td colSpan={6} className="px-4 py-3 text-center text-[#8d6e63]">
+                        <td
+                          colSpan={6}
+                          className="px-4 py-3 text-center text-[#8d6e63]"
+                        >
                           No users found
                         </td>
                       </tr>
@@ -410,12 +509,14 @@ export default function AdminDashboardClient({
               </div>
             </div>
           </div>
-        )
+        );
       case "all-admins":
         return (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl md:text-2xl font-bold text-[#5d4037]">Admin Users</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-[#5d4037]">
+                Admin Users
+              </h2>
               <span className="text-sm text-[#8d6e63] bg-[#f8f5f0] px-3 py-1 rounded-full">
                 {filteredAdmins.length} admins
               </span>
@@ -425,16 +526,29 @@ export default function AdminDashboardClient({
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="bg-[#f8f5f0] text-[#5d4037]">
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Name</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Email</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Gender</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Location</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">Role</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Name
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Email
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Gender
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Location
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium border-b border-[#e6dfd3]">
+                        Role
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredAdmins.map((adm, idx) => (
-                      <tr key={idx} className="hover:bg-[#f8f5f0] transition-colors">
+                      <tr
+                        key={idx}
+                        className="hover:bg-[#f8f5f0] transition-colors"
+                      >
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3] text-[#5d4037] font-medium">
                           {adm.name}
                         </td>
@@ -456,7 +570,10 @@ export default function AdminDashboardClient({
                     ))}
                     {filteredAdmins.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="px-4 py-3 text-center text-[#8d6e63]">
+                        <td
+                          colSpan={5}
+                          className="px-4 py-3 text-center text-[#8d6e63]"
+                        >
                           No admins found
                         </td>
                       </tr>
@@ -466,11 +583,11 @@ export default function AdminDashboardClient({
               </div>
             </div>
           </div>
-        )
+        );
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#f8f5f0]">
@@ -499,8 +616,8 @@ export default function AdminDashboardClient({
           <div className="space-y-1">
             <button
               onClick={() => {
-                setActiveSection("overview")
-                setSidebarOpen(false)
+                setActiveSection("overview");
+                setSidebarOpen(false);
               }}
               className={`flex items-center w-full text-left px-4 py-3 rounded-lg transition-colors ${
                 activeSection === "overview"
@@ -513,8 +630,8 @@ export default function AdminDashboardClient({
             </button>
             <button
               onClick={() => {
-                setActiveSection("comments-events")
-                setSidebarOpen(false)
+                setActiveSection("comments-events");
+                setSidebarOpen(false);
               }}
               className={`flex items-center w-full text-left px-4 py-3 rounded-lg transition-colors ${
                 activeSection === "comments-events"
@@ -527,8 +644,8 @@ export default function AdminDashboardClient({
             </button>
             <button
               onClick={() => {
-                setActiveSection("all-users")
-                setSidebarOpen(false)
+                setActiveSection("all-users");
+                setSidebarOpen(false);
               }}
               className={`flex items-center w-full text-left px-4 py-3 rounded-lg transition-colors ${
                 activeSection === "all-users"
@@ -541,8 +658,8 @@ export default function AdminDashboardClient({
             </button>
             <button
               onClick={() => {
-                setActiveSection("all-admins")
-                setSidebarOpen(false)
+                setActiveSection("all-admins");
+                setSidebarOpen(false);
               }}
               className={`flex items-center w-full text-left px-4 py-3 rounded-lg transition-colors ${
                 activeSection === "all-admins"
@@ -558,7 +675,9 @@ export default function AdminDashboardClient({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">{renderContent()}</main>
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
+        {renderContent()}
+      </main>
     </div>
-  )
+  );
 }

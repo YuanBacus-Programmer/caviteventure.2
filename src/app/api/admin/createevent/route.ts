@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // 6) Create the event
+    // 6) Create the event with status = "pending"
     const newEvent = await Event.create({
       title,
       description,
@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
       location,
       createdBy: currentUser._id,
       image, // store the base64 or data URL
+      status: "pending", // Key line: event now requires superadmin approval
     });
 
     // 7) Create a log entry

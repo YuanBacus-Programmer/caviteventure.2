@@ -31,7 +31,7 @@ export default function SignInForm() {
         // Redirect based on user role
         setTimeout(() => {
           if (data.role === "superadmin") {
-            router.push("/superadmin/dashboard");
+            router.push("/superadmindashboard");
           } else if (data.role === "admin") {
             router.push("/dashboard");
           } else {
@@ -60,14 +60,18 @@ export default function SignInForm() {
           <div className="w-16 h-16 bg-[#f8f5f0] rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
             <LogIn size={28} className="text-[#8d6e63]" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#5d4037]">Welcome Back</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#5d4037]">
+            Welcome Back
+          </h2>
           <p className="text-[#8d6e63] mt-2">Sign in to your account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email field */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-[#5d4037]">Email Address</label>
+            <label className="block text-sm font-medium text-[#5d4037]">
+              Email Address
+            </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mail size={18} className="text-[#a1887f]" />
@@ -86,7 +90,9 @@ export default function SignInForm() {
           {/* Password field */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <label className="block text-sm font-medium text-[#5d4037]">Password</label>
+              <label className="block text-sm font-medium text-[#5d4037]">
+                Password
+              </label>
               <Link
                 href="/forgot-password"
                 className="text-xs text-[#8d6e63] hover:text-[#5d4037] hover:underline transition-colors"
@@ -142,7 +148,14 @@ export default function SignInForm() {
                   fill="none"
                   viewBox="0 0 24 24"
                 >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
                   <path
                     className="opacity-75"
                     fill="currentColor"
@@ -162,7 +175,10 @@ export default function SignInForm() {
           <div className="pt-2 text-center">
             <p className="text-[#8d6e63] text-sm">
               Don't have an account?{" "}
-              <Link href="/signup" className="text-[#5d4037] font-medium hover:underline transition-colors">
+              <Link
+                href="/signup"
+                className="text-[#5d4037] font-medium hover:underline transition-colors"
+              >
                 Create an account
               </Link>
             </p>

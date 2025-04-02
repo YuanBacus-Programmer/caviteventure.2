@@ -1,4 +1,4 @@
-// File: app/eventpage/page.tsx
+// app/eventpage/page.tsx
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import dbConnect from "@/lib/dbConnect";
@@ -22,7 +22,6 @@ export default async function EventPage() {
     redirect("/signin");
   }
 
-  // Provide the type to .lean<IEvent[]>()
   const approvedEvents = await Event.find({ status: "approved" }).lean<IEvent[]>();
 
   return (

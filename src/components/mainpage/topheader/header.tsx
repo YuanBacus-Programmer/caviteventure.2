@@ -1,43 +1,52 @@
-"use client"
+"use client";
 
-import { useState, useCallback, useEffect } from "react"
-import useSWR from "swr"
-import dynamic from "next/dynamic"
-import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useState, useCallback, useEffect } from "react";
+import useSWR from "swr";
+import dynamic from "next/dynamic";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // Dynamically import Lucide icons for no SSR usage
-const MenuIcon = dynamic(() => import("lucide-react").then((mod) => mod.Menu), { ssr: false })
-const CloseIcon = dynamic(() => import("lucide-react").then((mod) => mod.X), { ssr: false })
+const MenuIcon = dynamic(() => import("lucide-react").then((mod) => mod.Menu), {
+  ssr: false,
+});
+const CloseIcon = dynamic(() => import("lucide-react").then((mod) => mod.X), {
+  ssr: false,
+});
 
-import Logo from "@/assets/headerimages/logosaas.png"
-import arrowRightUrl from "@/assets/headerimages/next (1).png"
+// Assets
+import Logo from "@/assets/headerimages/logosaas.png";
+import arrowRightUrl from "@/assets/headerimages/next (1).png";
 
 // SWR fetcher
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Header() {
-  const router = useRouter()
+  const router = useRouter();
 
   // Use SWR to fetch the auth status + user role in real time (poll every 5 seconds)
-  const { data, error, mutate } = useSWR("/api/auth/me", fetcher, { refreshInterval: 5000 })
-  const isAuthenticated = data?.isAuthenticated || false
-  const userRole = data?.user?.role // e.g. "admin" or "user"
+  const { data, error, mutate } = useSWR("/api/auth/me", fetcher, {
+    refreshInterval: 5000,
+  });
+  const isAuthenticated = data?.isAuthenticated || false;
+  const userRole = data?.user?.role; // e.g. "admin", "superadmin", or "user"
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isPromptOpen, setIsPromptOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isPromptOpen, setIsPromptOpen] = useState(false);
 
   // For mobile responsiveness: close menu if window is resized to desktop
   const handleResize = useCallback(() => {
-    if (window.innerWidth >= 768) setIsMenuOpen(false)
-  }, [])
+    if (window.innerWidth >= 768) {
+      setIsMenuOpen(false);
+    }
+  }, []);
 
   useEffect(() => {
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [handleResize])
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [handleResize]);
 
   return (
     <>
@@ -59,7 +68,7 @@ export default function Header() {
                   transition={{ type: "spring", damping: 25, stiffness: 300 }}
                   className="bg-gradient-to-b from-[#f5f0e5] to-[#e6d7c3] p-8 rounded-xl shadow-2xl border border-[#d7c3a7] w-full max-w-sm relative overflow-hidden"
                 >
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#654321] via-[#8B4513] to-[#654321]"></div>
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#654321] via-[#8B4513] to-[#654321]" />
 
                   <div className="mb-6 text-center">
                     <motion.div
@@ -97,7 +106,8 @@ export default function Header() {
                       transition={{ delay: 0.4 }}
                       className="text-[#8B4513] leading-relaxed"
                     >
-                      Please sign in to your account to view and register for our exclusive events and exhibitions.
+                      Please sign in to your account to view and register for our
+                      exclusive events and exhibitions.
                     </motion.p>
                   </div>
 
@@ -109,14 +119,15 @@ export default function Header() {
                   >
                     <motion.button
                       onClick={() => {
-                        setIsPromptOpen(false)
-                        router.push("/signin")
+                        setIsPromptOpen(false);
+                        router.push("/signin");
                       }}
                       className="bg-[#654321] text-[#f5f0e5] px-4 py-3 rounded-lg transition-all duration-300 font-medium flex items-center justify-center gap-2 shadow-md"
                       whileHover={{
                         backgroundColor: "#8B4513",
                         scale: 1.02,
-                        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                        boxShadow:
+                          "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
                       }}
                       whileTap={{ scale: 0.98 }}
                     >
@@ -191,7 +202,9 @@ export default function Header() {
                   className="rounded-lg border border-[#d7c3a7] shadow-md"
                   priority
                 />
-                <span className="text-lg font-bold text-[#654321]">CaviteVenture</span>
+                <span className="text-lg font-bold text-[#654321]">
+                  CaviteVenture
+                </span>
               </Link>
 
               <motion.button
@@ -200,7 +213,11 @@ export default function Header() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                {isMenuOpen ? <CloseIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+                {isMenuOpen ? (
+                  <CloseIcon className="h-6 w-6" />
+                ) : (
+                  <MenuIcon className="h-6 w-6" />
+                )}
               </motion.button>
 
               <nav className="hidden md:flex gap-6 text-[#654321]/80 items-center">
@@ -210,7 +227,9 @@ export default function Header() {
                     onClick={() =>
                       link === "Events"
                         ? setIsPromptOpen(true)
-                        : router.push(link === "Home" ? "/" : `/${link.toLowerCase()}`)
+                        : router.push(
+                            link === "Home" ? "/" : `/${link.toLowerCase()}`
+                          )
                     }
                     className="font-bold uppercase hover:text-[#8B4513] transition"
                     whileHover={{ scale: 1.05, y: -2 }}
@@ -225,11 +244,11 @@ export default function Header() {
         </>
       )}
 
-      {/* ----------------------- PRIVATE NAVBAR: ADMIN ----------------------- */}
-      {isAuthenticated && userRole === "admin" && (
+      {/* ----------------------- PRIVATE NAVBAR: SUPERADMIN ----------------------- */}
+      {isAuthenticated && userRole === "superadmin" && (
         <header className="sticky top-0 z-40 bg-[#f5f0e5]/80 backdrop-blur-md shadow-md border-b border-[#d7c3a7]">
           <div className="py-5 container mx-auto px-4 flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/superadmindashboard" className="flex items-center gap-2">
               <Image
                 src={Logo || "/placeholder.svg"}
                 alt="CaviteVenture Logo"
@@ -238,7 +257,9 @@ export default function Header() {
                 className="rounded-lg border border-[#d7c3a7] shadow-md"
                 priority
               />
-              <span className="text-lg font-bold text-[#654321]">CaviteVenture</span>
+              <span className="text-lg font-bold text-[#654321]">
+                CaviteVenture
+              </span>
             </Link>
 
             <motion.button
@@ -247,22 +268,45 @@ export default function Header() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              {isMenuOpen ? <CloseIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+              {isMenuOpen ? (
+                <CloseIcon className="h-6 w-6" />
+              ) : (
+                <MenuIcon className="h-6 w-6" />
+              )}
             </motion.button>
 
             <nav className="hidden md:flex gap-6 text-[#654321]/80 items-center">
-              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/dashboard" className="font-bold uppercase hover:text-[#8B4513] transition">
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/superadmindashboard"
+                  className="font-bold uppercase hover:text-[#8B4513] transition"
+                >
                   Dashboard
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/createevent" className="font-bold uppercase hover:text-[#8B4513] transition">
-                  Create Event
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/eventapproval"
+                  className="font-bold uppercase hover:text-[#8B4513] transition"
+                >
+                  Event Approval
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/profilepage" className="font-bold uppercase hover:text-[#8B4513] transition">
+              {/* SUPERADMIN uses the same /profilepage route as others */}
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/profilepage"
+                  className="font-bold uppercase hover:text-[#8B4513] transition"
+                >
                   Profile
                 </Link>
               </motion.div>
@@ -279,7 +323,131 @@ export default function Header() {
                 className="md:hidden bg-[#f5f0e5] border-t border-[#d7c3a7]"
               >
                 <ul className="flex flex-col gap-4 p-4 text-[#654321]/80">
-                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
+                  <motion.li
+                    whileHover={{ x: 5, color: "#8B4513" }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Link
+                      href="/superadmindashboard"
+                      className="block font-bold uppercase transition"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                  </motion.li>
+                  <motion.li
+                    whileHover={{ x: 5, color: "#8B4513" }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Link
+                      href="/eventapproval"
+                      className="block font-bold uppercase transition"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Event Approval
+                    </Link>
+                  </motion.li>
+                  <motion.li
+                    whileHover={{ x: 5, color: "#8B4513" }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Link
+                      href="/profilepage"
+                      className="block font-bold uppercase transition"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                  </motion.li>
+                </ul>
+              </motion.nav>
+            )}
+          </AnimatePresence>
+        </header>
+      )}
+
+      {/* ----------------------- PRIVATE NAVBAR: ADMIN ----------------------- */}
+      {isAuthenticated && userRole === "admin" && (
+        <header className="sticky top-0 z-40 bg-[#f5f0e5]/80 backdrop-blur-md shadow-md border-b border-[#d7c3a7]">
+          <div className="py-5 container mx-auto px-4 flex items-center justify-between">
+            <Link href="/dashboard" className="flex items-center gap=2">
+              <Image
+                src={Logo || "/placeholder.svg"}
+                alt="CaviteVenture Logo"
+                width={40}
+                height={40}
+                className="rounded-lg border border-[#d7c3a7] shadow-md"
+                priority
+              />
+              <span className="text-lg font-bold text-[#654321]">
+                CaviteVenture
+              </span>
+            </Link>
+
+            <motion.button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 text-[#654321] hover:bg-[#d7c3a7]/20 rounded-md"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              {isMenuOpen ? (
+                <CloseIcon className="h-6 w-6" />
+              ) : (
+                <MenuIcon className="h-6 w-6" />
+              )}
+            </motion.button>
+
+            <nav className="hidden md:flex gap-6 text-[#654321]/80 items-center">
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/dashboard"
+                  className="font-bold uppercase hover:text-[#8B4513] transition"
+                >
+                  Dashboard
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/createevent"
+                  className="font-bold uppercase hover:text-[#8B4513] transition"
+                >
+                  Create Event
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/profilepage"
+                  className="font-bold uppercase hover:text-[#8B4513] transition"
+                >
+                  Profile
+                </Link>
+              </motion.div>
+            </nav>
+          </div>
+
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.nav
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="md:hidden bg-[#f5f0e5] border-t border-[#d7c3a7]"
+              >
+                <ul className="flex flex-col gap-4 p-4 text-[#654321]/80">
+                  <motion.li
+                    whileHover={{ x: 5, color: "#8B4513" }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <Link
                       href="/dashboard"
                       className="block font-bold uppercase transition"
@@ -288,7 +456,10 @@ export default function Header() {
                       Dashboard
                     </Link>
                   </motion.li>
-                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
+                  <motion.li
+                    whileHover={{ x: 5, color: "#8B4513" }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <Link
                       href="/createevent"
                       className="block font-bold uppercase transition"
@@ -297,7 +468,10 @@ export default function Header() {
                       Create Event
                     </Link>
                   </motion.li>
-                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
+                  <motion.li
+                    whileHover={{ x: 5, color: "#8B4513" }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <Link
                       href="/profilepage"
                       className="block font-bold uppercase transition"
@@ -314,10 +488,10 @@ export default function Header() {
       )}
 
       {/* ----------------------- PRIVATE NAVBAR: REGULAR USER ----------------------- */}
-      {isAuthenticated && userRole !== "admin" && (
+      {isAuthenticated && userRole !== "admin" && userRole !== "superadmin" && (
         <header className="sticky top-0 z-40 bg-[#f5f0e5]/80 backdrop-blur-md shadow-md border-b border-[#d7c3a7]">
           <div className="py-5 container mx-auto px-4 flex items-center justify-between">
-            <Link href="/homepage" className="flex items-center gap-2">
+            <Link href="/homepage" className="flex items-center gap=2">
               <Image
                 src={Logo || "/placeholder.svg"}
                 alt="CaviteVenture Logo"
@@ -326,7 +500,9 @@ export default function Header() {
                 className="rounded-lg border border-[#d7c3a7] shadow-md"
                 priority
               />
-              <span className="text-lg font-bold text-[#654321]">CaviteVenture</span>
+              <span className="text-lg font-bold text-[#654321]">
+                CaviteVenture
+              </span>
             </Link>
 
             <motion.button
@@ -335,27 +511,55 @@ export default function Header() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              {isMenuOpen ? <CloseIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+              {isMenuOpen ? (
+                <CloseIcon className="h-6 w-6" />
+              ) : (
+                <MenuIcon className="h-6 w-6" />
+              )}
             </motion.button>
 
             <nav className="hidden md:flex gap-6 text-[#654321]/80 items-center">
-              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/homepage" className="font-bold uppercase hover:text-[#8B4513] transition">
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/homepage"
+                  className="font-bold uppercase hover:text-[#8B4513] transition"
+                >
                   Home
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/eventpage" className="font-bold uppercase hover:text-[#8B4513] transition">
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/eventpage"
+                  className="font-bold uppercase hover:text-[#8B4513] transition"
+                >
                   Events
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/exhibitpage" className="font-bold uppercase hover:text-[#8B4513] transition">
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/exhibitpage"
+                  className="font-bold uppercase hover:text-[#8B4513] transition"
+                >
                   Exhibit
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/profilepage" className="font-bold uppercase hover:text-[#8B4513] transition">
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/profilepage"
+                  className="font-bold uppercase hover:text-[#8B4513] transition"
+                >
                   Profile
                 </Link>
               </motion.div>
@@ -372,7 +576,10 @@ export default function Header() {
                 className="md:hidden bg-[#f5f0e5] border-t border-[#d7c3a7]"
               >
                 <ul className="flex flex-col gap-4 p-4 text-[#654321]/80">
-                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
+                  <motion.li
+                    whileHover={{ x: 5, color: "#8B4513" }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <Link
                       href="/homepage"
                       className="block font-bold uppercase transition"
@@ -381,7 +588,10 @@ export default function Header() {
                       Home
                     </Link>
                   </motion.li>
-                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
+                  <motion.li
+                    whileHover={{ x: 5, color: "#8B4513" }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <Link
                       href="/eventpage"
                       className="block font-bold uppercase transition"
@@ -390,7 +600,10 @@ export default function Header() {
                       Events
                     </Link>
                   </motion.li>
-                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
+                  <motion.li
+                    whileHover={{ x: 5, color: "#8B4513" }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <Link
                       href="/exhibitpage"
                       className="block font-bold uppercase transition"
@@ -399,7 +612,10 @@ export default function Header() {
                       Exhibit
                     </Link>
                   </motion.li>
-                  <motion.li whileHover={{ x: 5, color: "#8B4513" }} transition={{ type: "spring", stiffness: 300 }}>
+                  <motion.li
+                    whileHover={{ x: 5, color: "#8B4513" }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <Link
                       href="/profilepage"
                       className="block font-bold uppercase transition"
@@ -415,5 +631,5 @@ export default function Header() {
         </header>
       )}
     </>
-  )
+  );
 }

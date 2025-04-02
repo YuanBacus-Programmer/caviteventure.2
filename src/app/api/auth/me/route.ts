@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
+import { parseCookies } from "@/lib/cookieUtils";
 import { getUserIdByToken } from "@/lib/auth";
 import User from "@/models/User";
 
@@ -19,17 +20,23 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // 2) Read the sessionToken from cookies
+  // 2) Parse cookies from the request
   const cookieHeader = req.headers.get("cookie") || "";
-  const tokenMatch = cookieHeader.match(/sessionToken=([^;]+)/);
-  const token = tokenMatch ? tokenMatch[1] : null;
-  if (!token) {
+  const allCookies = parseCookies(cookieHeader);
+
+  // Extract the session token and role from cookies
+  const sessionToken = allCookies.sessionToken || null;
+  // Optionally, if you'd like to read or compare the role cookie:
+  const roleCookie = allCookies.role || "";
+
+  // If there's no session token, user is not authenticated
+  if (!sessionToken) {
     return NextResponse.json({ isAuthenticated: false });
   }
 
   try {
     // 3) Validate token -> get userId
-    const userId = await getUserIdByToken(token);
+    const userId = await getUserIdByToken(sessionToken);
     if (!userId) {
       return NextResponse.json({ isAuthenticated: false });
     }
@@ -40,6 +47,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ isAuthenticated: false });
     }
 
+    // If you want to ensure the DB role matches the cookie role, you could do:
+    // if (roleCookie && user.role !== roleCookie) {
+    //   // Potential mismatch handling or just ignore
+    // }
+
     // 5) Return isAuthenticated + the user object
     return NextResponse.json({
       isAuthenticated: true,
@@ -48,7 +60,7 @@ export async function GET(req: NextRequest) {
         name: user.name,
         email: user.email,
         role: user.role, 
-        // add more fields if desired
+        // Add any other fields you want to expose
       },
     });
   } catch (error) {

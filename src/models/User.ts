@@ -6,16 +6,16 @@ export type UserRole = "user" | "admin" | "superadmin";
 
 // Extend Mongoose's Document interface for your user fields
 export interface IUser extends Document {
-  _id: Types.ObjectId;          // Explicitly define _id as an ObjectId
-  name: string;                 // e.g. "John Doe"
-  email: string;                // e.g. "john@example.com"
-  city: string;                 // e.g. "New York"
-  gender: "male" | "female";    // or you can add other options
-  hashedPassword: string;       // hashed password
-  isVerified: boolean;          // email verification status
-  verifyCode?: string;          // optional code used for email verification
-  profilePicture?: string;      // URL or base64 for user’s avatar
-  role: UserRole;               // "user" | "admin" | "superadmin"
+  _id: Types.ObjectId;       // Explicitly define _id as an ObjectId
+  name: string;              // e.g. "John Doe"
+  email: string;             // e.g. "john@example.com"
+  city: string;              // e.g. "New York"
+  gender: "male" | "female"; // or add other options if needed
+  hashedPassword: string;    // hashed password
+  isVerified: boolean;       // email verification status
+  verifyCode?: string;       // optional code used for email verification
+  profilePicture?: string;   // URL or base64 for user’s avatar
+  role: UserRole;            // "user", "admin", or "superadmin"
 }
 
 // Define the User schema
@@ -24,12 +24,12 @@ const UserSchema = new Schema<IUser>(
     name: {
       type: String,
       required: true,
-      unique: true,          // change to false if you don't want names to be unique
+      unique: true, // Set to false if you don't want names to be unique
     },
     email: {
       type: String,
       required: true,
-      unique: true,          // typically emails are unique
+      unique: true, // Typically emails are unique
     },
     city: {
       type: String,

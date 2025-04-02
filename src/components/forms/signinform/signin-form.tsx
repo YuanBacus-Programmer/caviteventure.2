@@ -1,55 +1,57 @@
-"use client"
-import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react"
+"use client";
+import type React from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
 
 export default function SignInForm() {
-  const router = useRouter()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [status, setStatus] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setStatus("")
-    setIsLoading(true)
+    e.preventDefault();
+    setStatus("");
+    setIsLoading(true);
 
     try {
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-      })
-      const data = await res.json()
+      });
+      const data = await res.json();
 
       if (res.ok) {
-        setStatus("Sign in successful!")
+        setStatus("Sign in successful!");
         // Redirect based on user role
         setTimeout(() => {
-          if (data.role === "admin") {
-            router.push("/dashboard")
+          if (data.role === "superadmin") {
+            router.push("/superadmin/dashboard");
+          } else if (data.role === "admin") {
+            router.push("/dashboard");
           } else {
-            router.push("/homepage")
+            router.push("/homepage");
           }
-        }, 1000)
+        }, 1000);
       } else {
-        setStatus(data.message || "Sign in error.")
+        setStatus(data.message || "Sign in error.");
       }
     } catch (err) {
-      console.error(err)
-      setStatus("An error occurred during sign in.")
+      console.error(err);
+      setStatus("An error occurred during sign in.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f5f0e6] p-4 sm:p-6 md:p-8">
@@ -168,6 +170,5 @@ export default function SignInForm() {
         </form>
       </div>
     </div>
-  )
+  );
 }
-

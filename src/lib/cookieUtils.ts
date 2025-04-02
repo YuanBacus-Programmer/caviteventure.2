@@ -1,33 +1,52 @@
-// src/lib/cookieUtils.ts
+// File: src/lib/cookieUtils.ts
 import { parse, serialize } from "cookie";
 
 /**
- * Just parse cookies using 'cookie' library.
- * This file does NOT import sessionDb or Mongoose.
- */
-
-/** 
  * parseCookies:
- *   The Edge runtime only needs to do a minimal check for the presence of a cookie.
+ *   Parses any cookie header string into an object.
+ *   e.g. parseCookies("role=superadmin; sessionToken=abcd123")
+ *   => { role: "superadmin", sessionToken: "abcd123" }
  */
 export function parseCookies(cookieHeader?: string): Record<string, string> {
   if (!cookieHeader) return {};
-  // If TS complains about undefined, cast as needed:
   return parse(cookieHeader) as Record<string, string>;
 }
 
 /**
+ * parseUserRole:
+ *   Convenience function to return role from cookie header.
+ *   Defaults to "user" if not found.
+ */
+export function parseUserRole(cookieHeader?: string): string {
+  const allCookies = parseCookies(cookieHeader);
+  return allCookies.role || "user";
+}
+
+/**
  * serializeSessionCookie:
- *   Create a sessionToken cookie. 
- *   We can import from here in the Node environment if we want,
- *   or keep everything separate. This doesn't load Mongoose.
+ *   Creates a "sessionToken" cookie with typical security options.
  */
 export function serializeSessionCookie(token: string): string {
   return serialize("sessionToken", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 24, 
+    maxAge: 60 * 60 * 24,
+    sameSite: "strict",
+  });
+}
+
+/**
+ * serializeRoleCookie:
+ *   Creates/updates a "role" cookie with typical security options.
+ *   e.g. role = "superadmin" | "admin" | "user"
+ */
+export function serializeRoleCookie(role: string): string {
+  return serialize("role", role, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24,
     sameSite: "strict",
   });
 }

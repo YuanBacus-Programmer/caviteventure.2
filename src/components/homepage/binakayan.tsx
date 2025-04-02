@@ -1,9 +1,11 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import BinakayanImage from "@/assets/newassets/binakayansketch.png"
-import { ArrowRight } from "lucide-react"
-import { motion } from "framer-motion"
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import BinakayanImage from "@/assets/newassets/binakayansketch.png";
+import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Binakayan = () => {
   return (
@@ -33,14 +35,17 @@ const Binakayan = () => {
         </motion.p>
 
         <motion.div
-          className="flex items-center text-[#666666] font-medium group w-fit"
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           viewport={{ once: true, amount: 0.5 }}
         >
-          <span className="mr-2 uppercase text-sm tracking-wider">More About</span>
-          <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-2" />
+          <Link href="/homepage/binakayan">
+            <div className="flex items-center text-[#666666] font-medium group w-fit cursor-pointer">
+              <span className="mr-2 uppercase text-sm tracking-wider">More About</span>
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-2" />
+            </div>
+          </Link>
         </motion.div>
       </div>
 
@@ -62,7 +67,7 @@ const Binakayan = () => {
         />
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default Binakayan
+export default Binakayan;

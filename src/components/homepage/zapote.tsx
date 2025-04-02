@@ -1,9 +1,11 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { ArrowRight } from "lucide-react"
-import { motion } from "framer-motion"
-import ZapoteImage from "@/assets/newassets/zapotesignupimage.png"
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import ZapoteImage from "@/assets/newassets/zapotesignupimage.png";
 
 const Zapote = () => {
   return (
@@ -51,18 +53,24 @@ const Zapote = () => {
         </motion.p>
 
         <motion.div
-          className="flex items-center text-[#666666] font-medium group w-fit"
+          className="flex items-center text-[#666666] font-medium group w-fit cursor-pointer"
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           viewport={{ once: true, amount: 0.5 }}
         >
-          <span className="mr-2 uppercase text-sm tracking-wider">More About</span>
-          <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-2" />
+          <Link href="/homepage/zapote">
+            <div className="flex items-center">
+              <span className="mr-2 uppercase text-sm tracking-wider">
+                More About
+              </span>
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-2" />
+            </div>
+          </Link>
         </motion.div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Zapote
+export default Zapote;

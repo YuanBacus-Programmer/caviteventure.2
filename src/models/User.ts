@@ -11,7 +11,8 @@ export interface IUser extends Document {
   email: string;             // e.g. "john@example.com"
   city: string;              // e.g. "New York"
   gender: "male" | "female"; // or add other options if needed
-  hashedPassword: string;    // hashed password
+  hashedPassword: string;    // hashed password stored in the database
+  password?: string;         // virtual alias for hashedPassword
   isVerified: boolean;       // email verification status
   verifyCode?: string;       // optional code used for email verification
   profilePicture?: string;   // URL or base64 for user’s avatar
@@ -63,8 +64,19 @@ const UserSchema = new Schema<IUser>(
   },
   {
     timestamps: true, // if you want createdAt / updatedAt fields
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+// Create a virtual property 'password' to alias hashedPassword
+UserSchema.virtual("password")
+  .get(function (this: IUser) {
+    return this.hashedPassword;
+  })
+  .set(function (this: IUser, value: string) {
+    this.hashedPassword = value;
+  });
 
 // Create or reuse the existing User model
 const User: Model<IUser> =

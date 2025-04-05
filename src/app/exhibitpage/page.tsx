@@ -2,7 +2,11 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import dbConnect from "@/lib/dbConnect";
 import { getUserIdByToken } from "@/lib/auth";
-import PrivateHeader from "@/components/mainpage/topheader/header";
+import ZenTry from "@/components/zentrihero/zentrihero"
+import AboutCav from "@/components/zentrihero/aboutcav"
+import Features from "@/components/zentrihero/features"
+import Story from "@/components/zentrihero/story"
+import Contact from "@/components/zentrihero/contact"
 
 export default async function ExhibitPage() {
   const cookieStore = await cookies();
@@ -19,9 +23,13 @@ export default async function ExhibitPage() {
 
   return (
     <div>
-      <main className="p-6">
-        <h1 className="text-2xl font-bold">Exhibit Page</h1>
-        <p className="mt-4">A private exhibit area – for authorized users only.</p>
+      <main>
+    
+        <ZenTry />
+        <AboutCav />
+        <Features />
+        <Story />
+        <Contact />
       </main>
     </div>
   );

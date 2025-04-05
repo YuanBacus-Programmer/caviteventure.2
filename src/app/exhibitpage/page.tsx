@@ -8,6 +8,7 @@ import Features from "@/components/zentrihero/features"
 import Story from "@/components/zentrihero/story"
 import Contact from "@/components/zentrihero/contact"
 
+
 export default async function ExhibitPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("sessionToken")?.value;
@@ -30,6 +31,7 @@ export default async function ExhibitPage() {
         <Features />
         <Story />
         <Contact />
+        
       </main>
     </div>
   );

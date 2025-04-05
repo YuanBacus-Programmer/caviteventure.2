@@ -1,29 +1,33 @@
-export const runtime = "nodejs"
+export const runtime = "nodejs";
 
-import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
-import dbConnect from "@/lib/dbConnect"
-import User, { type IUser } from "@/models/User"
-import { getUserIdByToken } from "@/lib/auth"
-import SignOutButton from "@/components/signout/SignOutButton"
-import Link from "next/link"
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import dbConnect from "@/lib/dbConnect";
+import User, { type IUser } from "@/models/User";
+import { getUserIdByToken } from "@/lib/auth";
+import SignOutButton from "@/components/signout/SignOutButton";
+import Link from "next/link";
+import { MapPin, UserIcon, Shield, Pencil, Building } from "lucide-react";
 
 export default async function ProfilePage() {
   // 1) Parse session token
-  const cookieStore = await cookies()
-  const token = cookieStore.get("sessionToken")?.value
-  if (!token) redirect("/signin")
+  const cookieStore = await cookies();
+  const token = cookieStore.get("sessionToken")?.value;
+  if (!token) redirect("/signin");
 
   // 2) Connect & load user
-  await dbConnect()
-  const userId = await getUserIdByToken(token)
-  if (!userId) redirect("/signin")
+  await dbConnect();
+  const userId = await getUserIdByToken(token);
+  if (!userId) redirect("/signin");
 
-  const user = (await User.findById(userId).lean()) as IUser | null
-  if (!user) redirect("/signin")
+  const user = (await User.findById(userId).lean()) as IUser | null;
+  if (!user) redirect("/signin");
+
+  // Fix: Assert that user may have a createdAt property.
+  const createdAt = (user as IUser & { createdAt?: string }).createdAt;
 
   return (
-    <div className="min-h-screen bg-[#f5f0e5]">
+    <div className="min-h-screen bg-gradient-to-b from-[#f5f0e5] to-[#e6d7c3]">
       {/* Decorative buildings background */}
       <div className="absolute top-0 left-0 w-full h-64 overflow-hidden opacity-10 pointer-events-none">
         <div
@@ -35,18 +39,29 @@ export default async function ProfilePage() {
         ></div>
       </div>
 
-      <main className="w-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 relative">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h1 className="text-3xl font-bold text-[#654321] tracking-tight">My Profile</h1>
+      <main className="w-full max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 relative">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <h1 className="text-3xl font-bold text-[#654321] tracking-tight flex items-center">
+            <Building className="w-6 h-6 mr-2 text-[#8B4513]" />
+            Zentry Profile
+          </h1>
           <SignOutButton />
         </div>
 
-        <div className="bg-white rounded-xl shadow-md overflow-hidden border border-[#e6d7c3]">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-[#e6d7c3]">
           {/* Profile Header with Image */}
           <div className="relative">
-            <div className="h-40 sm:h-48 bg-gradient-to-r from-[#e6d7c3] to-[#8B4513] relative">
-              {/* Silhouette of Cavite buildings */}
-              <div className="absolute bottom-0 left-0 w-full h-16 overflow-hidden">
+            <div className="h-48 sm:h-56 bg-gradient-to-r from-[#8B4513] via-[#a67c52] to-[#654321] relative">
+              {/* NFT-style pattern overlay */}
+              <div
+                className="absolute inset-0 opacity-20 mix-blend-overlay"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%23ffffff' fillOpacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                }}
+              ></div>
+
+              {/* Silhouette of buildings */}
+              <div className="absolute bottom-0 left-0 w-full h-20 overflow-hidden">
                 <div
                   className="w-full h-full bg-repeat-x"
                   style={{
@@ -57,25 +72,31 @@ export default async function ProfilePage() {
                 ></div>
               </div>
             </div>
+
             <div className="absolute -bottom-16 left-6 sm:left-8">
               <div className="relative group">
                 {user.profilePicture ? (
-                  <img
-                    src={user.profilePicture || "/placeholder.svg"}
-                    alt="Profile"
-                    className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-white shadow-lg"
-                  />
+                  <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-xl overflow-hidden border-4 border-white shadow-lg transform transition-transform group-hover:scale-105">
+                    <img
+                      src={user.profilePicture || "/placeholder.svg"}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  </div>
                 ) : (
-                  <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-[#e6d7c3] to-[#8B4513] border-4 border-white shadow-lg flex items-center justify-center">
-                    <span className="text-3xl font-medium text-white">
-                      {user.name?.charAt(0)?.toUpperCase() || "U"}
+                  <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-xl bg-gradient-to-br from-[#e6d7c3] to-[#8B4513] border-4 border-white shadow-lg flex items-center justify-center transform transition-transform group-hover:scale-105">
+                    <span className="text-4xl font-medium text-white">
+                      {user.name?.charAt(0)?.toUpperCase() || "Z"}
                     </span>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"></div>
                   </div>
                 )}
               </div>
             </div>
+
             <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
-              <div className="px-3 py-1.5 bg-white/80 backdrop-blur-sm rounded-full text-xs font-medium text-[#654321]">
+              <div className="px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium text-[#654321] shadow-md">
                 {user.role ? (
                   <span className="capitalize flex items-center">
                     <span className="w-2 h-2 rounded-full bg-[#8B4513] mr-2"></span>
@@ -84,7 +105,7 @@ export default async function ProfilePage() {
                 ) : (
                   <span className="flex items-center">
                     <span className="w-2 h-2 rounded-full bg-[#a67c52] mr-2"></span>
-                    Member
+                    Zentry Member
                   </span>
                 )}
               </div>
@@ -97,28 +118,15 @@ export default async function ProfilePage() {
               <div className="space-y-8">
                 <div>
                   <h2 className="text-sm font-medium text-[#8B4513] uppercase tracking-wider flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
+                    <UserIcon className="h-4 w-4 mr-2" />
                     Personal Information
                   </h2>
                   <div className="mt-4 space-y-5">
-                    <div className="bg-[#f5f0e5] p-4 rounded-lg">
+                    <div className="bg-[#f5f0e5] p-5 rounded-xl shadow-sm border border-[#e6d7c3]/50 hover:shadow-md transition-shadow">
                       <h3 className="text-xs text-[#8B4513]">Full Name</h3>
                       <p className="mt-1 text-lg font-medium text-[#654321]">{user.name || "Not provided"}</p>
                     </div>
-                    <div className="bg-[#f5f0e5] p-4 rounded-lg">
+                    <div className="bg-[#f5f0e5] p-5 rounded-xl shadow-sm border border-[#e6d7c3]/50 hover:shadow-md transition-shadow">
                       <h3 className="text-xs text-[#8B4513]">Email Address</h3>
                       <p className="mt-1 text-lg font-medium text-[#654321]">{user.email || "Not provided"}</p>
                     </div>
@@ -127,28 +135,28 @@ export default async function ProfilePage() {
 
                 <div>
                   <h2 className="text-sm font-medium text-[#8B4513] uppercase tracking-wider flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      />
-                    </svg>
+                    <Shield className="h-4 w-4 mr-2" />
                     Account Details
                   </h2>
                   <div className="mt-4 space-y-5">
-                    <div className="bg-[#f5f0e5] p-4 rounded-lg">
+                    <div className="bg-[#f5f0e5] p-5 rounded-xl shadow-sm border border-[#e6d7c3]/50 hover:shadow-md transition-shadow">
                       <h3 className="text-xs text-[#8B4513]">Role</h3>
-                      <p className="mt-1 text-lg font-medium text-[#654321] capitalize">
-                        {user.role || "Not specified"}
-                      </p>
+                      <div className="mt-1 flex items-center">
+                        <span className="text-lg font-medium text-[#654321] capitalize">
+                          {user.role || "Not specified"}
+                        </span>
+                        {user.role === "admin" && (
+                          <span className="ml-2 px-2 py-0.5 bg-[#8B4513] text-white text-xs rounded-md">Admin</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="bg-[#f5f0e5] p-5 rounded-xl shadow-sm border border-[#e6d7c3]/50 hover:shadow-md transition-shadow">
+                      <h3 className="text-xs text-[#8B4513]">Account Status</h3>
+                      <div className="mt-1 flex items-center">
+                        <span className="inline-block w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                        <span className="text-lg font-medium text-[#654321]">Active</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -157,30 +165,11 @@ export default async function ProfilePage() {
               <div className="space-y-8">
                 <div>
                   <h2 className="text-sm font-medium text-[#8B4513] uppercase tracking-wider flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
+                    <MapPin className="h-4 w-4 mr-2" />
                     Location
                   </h2>
                   <div className="mt-4 space-y-5">
-                    <div className="bg-[#f5f0e5] p-4 rounded-lg">
+                    <div className="bg-[#f5f0e5] p-5 rounded-xl shadow-sm border border-[#e6d7c3]/50 hover:shadow-md transition-shadow">
                       <h3 className="text-xs text-[#8B4513]">City</h3>
                       <p className="mt-1 text-lg font-medium text-[#654321]">{user.city || "Not provided"}</p>
                     </div>
@@ -189,27 +178,27 @@ export default async function ProfilePage() {
 
                 <div>
                   <h2 className="text-sm font-medium text-[#8B4513] uppercase tracking-wider flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
+                    <UserIcon className="h-4 w-4 mr-2" />
                     Personal Details
                   </h2>
                   <div className="mt-4 space-y-5">
-                    <div className="bg-[#f5f0e5] p-4 rounded-lg">
+                    <div className="bg-[#f5f0e5] p-5 rounded-xl shadow-sm border border-[#e6d7c3]/50 hover:shadow-md transition-shadow">
                       <h3 className="text-xs text-[#8B4513]">Gender</h3>
                       <p className="mt-1 text-lg font-medium text-[#654321] capitalize">
                         {user.gender || "Not specified"}
+                      </p>
+                    </div>
+
+                    <div className="bg-[#f5f0e5] p-5 rounded-xl shadow-sm border border-[#e6d7c3]/50 hover:shadow-md transition-shadow">
+                      <h3 className="text-xs text-[#8B4513]">Member Since</h3>
+                      <p className="mt-1 text-lg font-medium text-[#654321]">
+                        {createdAt
+                          ? new Date(createdAt).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })
+                          : "Not available"}
                       </p>
                     </div>
                   </div>
@@ -219,32 +208,17 @@ export default async function ProfilePage() {
           </div>
 
           {/* Footer with Edit Button */}
-          <div className="px-6 sm:px-8 py-5 bg-[#f5f0e5] border-t border-[#e6d7c3] flex justify-end">
+          <div className="px-6 sm:px-8 py-6 bg-gradient-to-r from-[#f5f0e5] to-[#e6d7c3] border-t border-[#e6d7c3] flex justify-end">
             <Link
               href="/profilepage/edit"
-              className="px-5 py-2.5 bg-[#8B4513] hover:bg-[#654321] text-white font-medium rounded-lg transition-colors duration-200 inline-flex items-center gap-2 shadow-sm"
+              className="px-5 py-2.5 bg-gradient-to-r from-[#8B4513] to-[#654321] hover:from-[#654321] hover:to-[#543210] text-white font-medium rounded-lg transition-all duration-200 inline-flex items-center gap-2 shadow-sm hover:shadow"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 
-                     3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                />
-              </svg>
+              <Pencil className="h-4 w-4" />
               Edit Profile
             </Link>
           </div>
         </div>
       </main>
     </div>
-  )
+  );
 }
-

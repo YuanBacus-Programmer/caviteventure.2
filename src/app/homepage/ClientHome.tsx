@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import Zapote from "@/assets/heroimages/cog.png"
 import SanRoque from "@/assets/heroimages/cylinder.png"
 import Binakayan from "@/assets/heroimages/noodle.png"
-import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react"
 
 // Import your pages
@@ -114,8 +113,8 @@ export default function ClientHome() {
               currentSlide === index
                 ? "opacity-100 translate-x-0"
                 : index < currentSlide || (currentSlide === 0 && index === slides.length - 1)
-                  ? "opacity-0 -translate-x-full"
-                  : "opacity-0 translate-x-full"
+                ? "opacity-0 -translate-x-full"
+                : "opacity-0 translate-x-full"
             }`}
           >
             {/* Image with overlay */}
@@ -148,14 +147,7 @@ export default function ClientHome() {
               >
                 {slide.name}
               </h2>
-              <Button
-                variant="outline"
-                className={`bg-transparent border border-[#f5f0e5] text-[#f5f0e5] hover:bg-[#f5f0e5] hover:text-[#654321] transition-all duration-300 delay-700 ${
-                  currentSlide === index ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-                }`}
-              >
-                READ MORE
-              </Button>
+              {/* Removed the "READ MORE" button */}
             </div>
           </div>
         ))}
@@ -230,7 +222,7 @@ export default function ClientHome() {
         <div className="max-w-3xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h2>
           <p className="text-[#e6d7c3] mb-8">
-            Find answers to common questions about visiting Cavite's historical sites.
+            Find answers to common questions about visiting Cavite&apos;s historical sites.
           </p>
 
           {/* FAQ Items */}
@@ -283,4 +275,3 @@ export default function ClientHome() {
     </>
   )
 }
-

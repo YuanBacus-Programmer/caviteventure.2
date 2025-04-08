@@ -313,7 +313,7 @@ export default function AdminDashboardClient({
                           {cmt.eventId?.title}
                         </td>
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3] text-[#5d4037]">
-                          {cmt.text}
+                          {cmt.text || "No comment"}
                         </td>
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3] text-[#8d6e63]">
                           {new Date(cmt.createdAt).toLocaleString()}
@@ -377,9 +377,9 @@ export default function AdminDashboardClient({
                           {ev.title}
                         </td>
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3] text-[#5d4037]">
-                          {ev.description.length > 50
-                            ? `${ev.description.substring(0, 50)}...`
-                            : ev.description}
+                          {(ev.description || "").length > 50
+                            ? `${(ev.description || "").substring(0, 50)}...`
+                            : ev.description || "No description"}
                         </td>
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3] text-[#5d4037]">
                           {new Date(ev.date).toLocaleDateString()}
@@ -483,7 +483,8 @@ export default function AdminDashboardClient({
                           </span>
                         </td>
                         <td className="px-4 py-3 text-sm border-b border-[#e6dfd3]">
-                          {usr.role !== "admin" && (
+                          {usr.role !== "admin" &&
+                          usr.role !== "superadmin" && (
                             <button
                               onClick={() => handleMakeAdmin(usr._id)}
                               className="bg-[#8d6e63] text-white px-3 py-1 rounded-md transition-all hover:bg-[#5d4037]"
@@ -675,9 +676,7 @@ export default function AdminDashboardClient({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
-        {renderContent()}
-      </main>
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">{renderContent()}</main>
     </div>
   );
 }

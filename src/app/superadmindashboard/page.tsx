@@ -2,19 +2,18 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import dbConnect from "@/lib/dbConnect";
 import { getUserIdByToken } from "@/lib/auth";
+import SuperAdminDashboardClient from "./SuperAdminDashboardClient";
 import User from "@/models/User";
 
 export default async function SuperAdminDashboardPage() {
   // 1) Connect to DB
   await dbConnect();
 
-  // 2) Await cookies(), then get sessionToken
+  // 2) Get session token
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get("sessionToken")?.value || null;
-
   console.log("SuperAdmin Dashboard => sessionToken:", sessionToken);
 
-  // If no session token, user is not logged in
   if (!sessionToken) {
     console.log("No session token found.");
     redirect("/signin");
@@ -44,13 +43,27 @@ export default async function SuperAdminDashboardPage() {
     redirect("/signin");
   }
 
-  // If user is superadmin, show the dashboard
+  // Example placeholder data. 
+  // Notice we've renamed `events` to `approvedEvents` to match your client code
+  const finalData = {
+    totalUsers: 100,
+    totalMale: 60,
+    totalFemale: 40,
+    logs: [],
+    approvedEvents: [],
+    allUsers: [],
+    admins: [],
+  };
+
   console.log("User is superadmin. Access granted.");
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">SuperAdmin Dashboard</h1>
-      <p>This page is only accessible to users with the "superadmin" role.</p>
+      <p>This page is only accessible to users with the &quot;superadmin&quot; role.</p>
+      
+      {/* Pass finalData down as a prop named dashboardData */}
+      <SuperAdminDashboardClient dashboardData={finalData} />
     </div>
   );
 }

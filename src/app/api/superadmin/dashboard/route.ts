@@ -3,15 +3,18 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { getUserIdByToken } from "@/lib/auth";
 import User from "@/models/User";
+import Event from "@/models/Event";
+import Log from "@/models/Log";
 
 export async function GET(request: Request) {
+  // Connect to the database
   await dbConnect();
 
-  // 1) Await cookies() so we get the actual cookie store, not a Promise
+  // Retrieve the cookie store and get the session token
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get("sessionToken")?.value || null;
 
-  // 2) If no sessionToken, user is not logged in
+  // If no session token is found, return a 401 response
   if (!sessionToken) {
     return new NextResponse(
       JSON.stringify({ error: "No session token, not logged in" }),
@@ -22,7 +25,7 @@ export async function GET(request: Request) {
     );
   }
 
-  // 3) Convert sessionToken -> userId
+  // Convert session token into a userId
   const userId = await getUserIdByToken(sessionToken);
   if (!userId) {
     return new NextResponse(
@@ -34,26 +37,58 @@ export async function GET(request: Request) {
     );
   }
 
-  // 4) Fetch the user from DB
+  // Fetch the user from the database
   const user = await User.findById(userId).lean();
   if (!user) {
-    return new NextResponse(JSON.stringify({ error: "User not found" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new NextResponse(
+      JSON.stringify({ error: "User not found" }),
+      {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 
-  // 5) Check if role is superadmin
+  // Check if the user has a superadmin role
   if (user.role !== "superadmin") {
-    return new NextResponse(JSON.stringify({ error: "Not authorized" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new NextResponse(
+      JSON.stringify({ error: "Not authorized" }),
+      {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 
-  // 6) If user is superadmin, return JSON
+  // Gather dashboard data
+
+  // Count total users and count by gender
+  const totalUsers = await User.countDocuments({});
+  const totalMale = await User.countDocuments({ gender: "male" });
+  const totalFemale = await User.countDocuments({ gender: "female" });
+
+  // Fetch approved events (assumes events have a "status" field set to "approved")
+  const approvedEvents = await Event.find({ status: "approved" }).lean();
+
+  // Fetch logs for event creation and approval (adjust action names if needed)
+  const logs = await Log.find({
+    action: { $in: ["create event", "approve event"] },
+  })
+    .populate("userId", "name email")
+    .lean();
+
+  // Fetch lists of all users and admin users
+  const allUsers = await User.find({}).lean();
+  const admins = await User.find({ role: "admin" }).lean();
+
+  // Return the gathered data as JSON
   return NextResponse.json({
-    message:
-      "SuperAdmin Dashboard data. Only accessible to users with the superadmin role.",
+    totalUsers,
+    totalMale,
+    totalFemale,
+    approvedEvents,
+    logs,
+    allUsers,
+    admins,
   });
 }

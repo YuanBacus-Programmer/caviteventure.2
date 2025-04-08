@@ -1,9 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import type React from "react"
+
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
+import { gsap } from "gsap"
 import Binakayan from "@/assets/newassets/1.png"
 import Zapote from "@/assets/newassets/2.png"
 import CasaDeTajeris from "@/assets/newassets/3.png"
@@ -18,6 +21,51 @@ const CenterAbout = () => {
     description: string
     year: string
   }>(null)
+
+  // GSAP hover effect states and refs
+  const [isHovering, setIsHovering] = useState(false)
+  const cardRefs = useRef<HTMLDivElement[]>([])
+
+  const addToRefs = (el: HTMLDivElement | null) => {
+    if (el && !cardRefs.current.includes(el)) {
+      cardRefs.current.push(el)
+    }
+  }
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const { clientX, clientY, currentTarget } = event
+    const rect = currentTarget.getBoundingClientRect()
+
+    const xOffset = clientX - (rect.left + rect.width / 2)
+    const yOffset = clientY - (rect.top + rect.height / 2)
+
+    if (isHovering) {
+      gsap.to(currentTarget, {
+        x: xOffset * 0.05,
+        y: yOffset * 0.05,
+        rotationY: xOffset / 20,
+        rotationX: -yOffset / 20,
+        transformPerspective: 600,
+        duration: 0.6,
+        ease: "power1.out",
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (!isHovering) {
+      cardRefs.current.forEach((card) => {
+        gsap.to(card, {
+          x: 0,
+          y: 0,
+          rotationY: 0,
+          rotationX: 0,
+          duration: 0.6,
+          ease: "power1.out",
+        })
+      })
+    }
+  }, [isHovering])
 
   // Historical places data with detailed descriptions
   const historicalPlaces = [
@@ -54,28 +102,6 @@ const CenterAbout = () => {
         "San Roque Church in Cavite is one of the oldest churches in the Philippines, with its origins dating back to 1602. Named after Saint Roch (San Roque), the patron saint of the sick, the church has stood as a spiritual beacon for centuries. The church features Spanish colonial architecture with thick stone walls, buttresses, and ornate religious artwork. Throughout its history, San Roque Church has survived wars, natural disasters, and the passage of time, becoming not just a place of worship but a living museum of Filipino faith and resilience. The church continues to serve the community today, hosting religious ceremonies and standing as a testament to Cavite's rich cultural and religious heritage.",
     },
   ]
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  }
 
   // Open image in modal/lightbox
   const openImage = (place: {
@@ -126,44 +152,42 @@ const CenterAbout = () => {
           Historical Places
         </motion.h2>
 
-        <motion.div
-          className="flex justify-center flex-wrap gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {historicalPlaces.map((place, index) => (
-            <motion.div
+            <div
               key={index}
-              className="m-4 relative group cursor-pointer"
-              variants={itemVariants}
-              whileHover={{
-                scale: 1.05,
-                transition: { duration: 0.3 },
-              }}
-              whileTap={{ scale: 0.98 }}
+              ref={addToRefs}
+              className="relative cursor-pointer"
+              onMouseMove={handleMouseMove}
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
               onClick={() => openImage(place)}
             >
-              <div className="relative w-[300px] h-[300px] overflow-hidden rounded-lg shadow-md border-2 border-[#8B4513]/20">
-                <Image
-                  src={place.image || "/placeholder.svg"}
-                  alt={place.alt}
-                  width={300}
-                  height={300}
-                  className="object-cover"
-                />
+              <div className="relative w-full h-[350px] overflow-hidden rounded-lg shadow-md border-2 border-[#8B4513]/20 bg-[#f9f9f9]">
+                <div className="relative h-[250px] w-full overflow-hidden">
+                  <Image
+                    src={place.image || "/placeholder.svg"}
+                    alt={place.alt}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  />
+                </div>
 
-                {/* Hover overlay with title */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#654321]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center">
-                  <div className="p-4 text-center w-full">
-                    <h3 className="text-[#f5f0e5] font-bold text-xl">{place.title}</h3>
-                    <p className="text-[#f5f0e5]/80 text-sm mt-1">Click to learn more</p>
+                <div className="p-4">
+                  <h3 className="text-[#654321] font-bold text-xl">{place.title}</h3>
+                  <p className="text-[#8B4513] text-sm mt-1">{place.year}</p>
+                  <div className="mt-2 flex justify-end">
+                    <span className="text-[#8B4513]/70 text-sm italic">Click to learn more</span>
                   </div>
                 </div>
+
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-[#654321]/10 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* Image Modal/Lightbox with Side-by-Side Layout */}

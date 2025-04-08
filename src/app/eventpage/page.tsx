@@ -5,7 +5,7 @@ import { getUserIdByToken } from "@/lib/auth"
 import Event, { type IEvent } from "@/models/Event"
 import Image from "next/image"
 import Events from "@/assets/newassets/eplore (1).png"
-import { EventCard } from "@/components/eventpageui/event-card"
+import { ComprehensiveEventCard } from "@/components/eventpageui/comprehensive-event-card"
 
 export const runtime = "nodejs"
 
@@ -23,6 +23,13 @@ export default async function EventPage() {
   }
 
   const approvedEvents = await Event.find({ status: "approved" }).lean<IEvent[]>()
+
+  // Map over events to convert ObjectId and Date to plain strings
+  const events = approvedEvents.map(ev => ({
+    ...ev,
+    _id: ev._id.toString(),
+    date: ev.date.toISOString(),
+  }))
 
   return (
     <div className="min-h-screen bg-[#f5f0e5]">
@@ -66,7 +73,7 @@ export default async function EventPage() {
             <div className="ml-4 h-1 flex-grow bg-gradient-to-r from-[#8B4513]/50 to-transparent rounded-full"></div>
           </div>
 
-          {approvedEvents.length === 0 ? (
+          {events.length === 0 ? (
             <div className="bg-white/50 backdrop-blur-sm rounded-xl p-8 text-center border border-[#e6d7c3] shadow-inner">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#e6d7c3] flex items-center justify-center">
                 <svg
@@ -84,13 +91,17 @@ export default async function EventPage() {
                   />
                 </svg>
               </div>
-              <p className="text-[#654321] text-lg font-medium">No approved events available at the moment.</p>
-              <p className="text-[#8B4513]/70 mt-2">Check back later for new events!</p>
+              <p className="text-[#654321] text-lg font-medium">
+                No approved events available at the moment.
+              </p>
+              <p className="text-[#8B4513]/70 mt-2">
+                Check back later for new events!
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {approvedEvents.map((ev) => (
-                <EventCard key={ev._id.toString()} event={ev} />
+              {events.map((ev) => (
+                <ComprehensiveEventCard key={ev._id} event={ev} />
               ))}
             </div>
           )}
@@ -111,4 +122,3 @@ export default async function EventPage() {
     </div>
   )
 }
-

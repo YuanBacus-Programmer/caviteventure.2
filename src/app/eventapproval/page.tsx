@@ -48,9 +48,8 @@ export default async function EventApprovalPage() {
   console.log("User is superadmin. Access granted.");
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Event Approval</h1>
-      <p>Here, the superadmin can approve or reject events submitted by admins.</p>
+    <div>
+    
 
       {/* Client component for approving events */}
       <SuperAdminEventApproval />

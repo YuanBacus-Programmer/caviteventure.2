@@ -1,4 +1,3 @@
-// File: models/User.ts
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
 
 // Possible roles
@@ -6,17 +5,18 @@ export type UserRole = "user" | "admin" | "superadmin";
 
 // Extend Mongoose's Document interface for your user fields
 export interface IUser extends Document {
-  _id: Types.ObjectId;       // Explicitly define _id as an ObjectId
-  name: string;              // e.g. "John Doe"
-  email: string;             // e.g. "john@example.com"
-  city: string;              // e.g. "New York"
-  gender: "male" | "female"; // or add other options if needed
-  hashedPassword: string;    // hashed password stored in the database
-  password?: string;         // virtual alias for hashedPassword
-  isVerified: boolean;       // email verification status
-  verifyCode?: string;       // optional code used for email verification
-  profilePicture?: string;   // URL or base64 for user’s avatar
-  role: UserRole;            // "user", "admin", or "superadmin"
+  _id: Types.ObjectId;
+  name: string;              
+  email: string;             
+  city: string;              
+  gender: "male" | "female"; 
+  hashedPassword: string;    
+  password?: string;         
+  isVerified: boolean;       
+  verifyCode?: string;       
+  profilePicture?: string;   
+  role: UserRole;            
+  bio?: string;              // <-- Added this optional bio field
 }
 
 // Define the User schema
@@ -25,12 +25,12 @@ const UserSchema = new Schema<IUser>(
     name: {
       type: String,
       required: true,
-      unique: true, // Set to false if you don't want names to be unique
+      unique: true,
     },
     email: {
       type: String,
       required: true,
-      unique: true, // Typically emails are unique
+      unique: true,
     },
     city: {
       type: String,
@@ -61,9 +61,12 @@ const UserSchema = new Schema<IUser>(
       default: "user",
       required: true,
     },
+    bio: {
+      type: String, // <-- Add a 'bio' field to match the interface
+    },
   },
   {
-    timestamps: true, // if you want createdAt / updatedAt fields
+    timestamps: true, // createdAt / updatedAt
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
@@ -78,7 +81,6 @@ UserSchema.virtual("password")
     this.hashedPassword = value;
   });
 
-// Create or reuse the existing User model
 const User: Model<IUser> =
   mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
 

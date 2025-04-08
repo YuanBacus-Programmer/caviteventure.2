@@ -58,9 +58,7 @@ export default async function SuperAdminDashboardPage() {
   console.log("User is superadmin. Access granted.");
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">SuperAdmin Dashboard</h1>
-      <p>This page is only accessible to users with the &quot;superadmin&quot; role.</p>
+    <div>
       
       {/* Pass finalData down as a prop named dashboardData */}
       <SuperAdminDashboardClient dashboardData={finalData} />

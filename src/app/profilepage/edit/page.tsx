@@ -6,6 +6,7 @@ import { getUserIdByToken } from "@/lib/auth"
 import SignOutButton from "@/components/signout/SignOutButton"
 import EditableProfileClient from "@/components/profile/EditableProfileClient"
 import Link from "next/link"
+import { ArrowLeft, Building } from "lucide-react"
 
 export default async function EditProfilePage() {
   const cookieStore = await cookies()
@@ -20,9 +21,9 @@ export default async function EditProfilePage() {
   if (!user) redirect("/signin")
 
   return (
-    <div className="min-h-screen bg-[#f5f0e5]">
-      {/* Decorative buildings background */}
-      <div className="absolute top-0 left-0 w-full h-64 overflow-hidden opacity-10 pointer-events-none">
+    <div className="min-h-screen bg-gradient-to-b from-[#f8f5f0] to-[#ece3d5]">
+      {/* Decorative buildings background - more subtle */}
+      <div className="absolute top-0 left-0 w-full h-64 overflow-hidden opacity-5 pointer-events-none">
         <div
           className="w-full h-full bg-repeat-x"
           style={{
@@ -35,24 +36,33 @@ export default async function EditProfilePage() {
       <main className="max-w-4xl mx-auto py-12 px-4 sm:px-6 relative">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div className="flex items-center gap-3">
-            <Link href="/profilepage" className="text-[#654321] hover:text-[#8B4513] transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
+            <Link
+              href="/profilepage"
+              className="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-[#e6d7c3] text-[#654321] hover:bg-[#f5f0e5] hover:text-[#8B4513] transition-colors shadow-sm"
+              aria-label="Back to profile"
+            >
+              <ArrowLeft className="h-4 w-4" />
             </Link>
-            <h1 className="text-3xl font-bold text-[#654321] tracking-tight">Edit Profile</h1>
+            <h1 className="text-3xl font-bold text-[#654321] tracking-tight flex items-center">
+              <Building className="w-6 h-6 mr-2 text-[#8B4513] hidden sm:inline-block" />
+              Edit Profile
+            </h1>
           </div>
           <SignOutButton />
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-[#e6d7c3]">
+        <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-[#e6d7c3]">
           {/* Profile Header with Gradient */}
-          <div className="h-24 bg-gradient-to-r from-[#e6d7c3] to-[#8B4513] relative">
-            {/* Silhouette of Cavite buildings */}
+          <div className="h-32 bg-gradient-to-r from-[#8B4513] via-[#a67c52] to-[#654321] relative">
+            {/* NFT-style pattern overlay */}
+            <div
+              className="absolute inset-0 opacity-20 mix-blend-overlay"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%23ffffff' fillOpacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              }}
+            ></div>
+
+            {/* Silhouette of buildings */}
             <div className="absolute bottom-0 left-0 w-full h-16 overflow-hidden">
               <div
                 className="w-full h-full bg-repeat-x"
@@ -67,17 +77,32 @@ export default async function EditProfilePage() {
 
           {/* Edit Form Container */}
           <div className="p-8">
-            <EditableProfileClient
-              initialName={user.name}
-              initialEmail={user.email}
-              initialCity={user.city}
-              initialGender={user.gender}
-              initialProfilePicture={user.profilePicture}
-            />
+            <div className="max-w-2xl mx-auto">
+              <div className="mb-6">
+                <h2 className="text-xl font-semibold text-[#654321] mb-2">Update Your Profile</h2>
+                <p className="text-[#8B4513]">
+                  Make changes to your profile information below. Your profile helps other Zentry members get to know
+                  you better.
+                </p>
+              </div>
+
+              <div className="bg-[#f8f5f0] p-6 rounded-xl border border-[#e6d7c3] mb-8">
+                <EditableProfileClient
+                  initialName={user.name}
+                  initialEmail={user.email}
+                  initialCity={user.city}
+                  initialGender={user.gender}
+                  initialProfilePicture={user.profilePicture}
+                />
+              </div>
+
+              <div className="text-sm text-[#8B4513] opacity-80 text-center">
+                <p>All changes will be saved automatically when you submit the form.</p>
+              </div>
+            </div>
           </div>
         </div>
       </main>
     </div>
   )
 }
-

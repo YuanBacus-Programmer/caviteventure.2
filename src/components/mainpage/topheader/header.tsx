@@ -192,7 +192,7 @@ export default function Header() {
           </AnimatePresence>
 
           <header className="sticky top-0 z-40 bg-[#f5f0e5]/80 backdrop-blur-md shadow-md border-b border-[#d7c3a7]">
-            <div className="py-5 container mx-auto px-4 flex items-center justify-between">
+            <div className="max-w-screen-xl mx-auto px-4 py-5 flex items-center justify-between">
               <Link href="/" className="flex items-center gap-2">
                 <Image
                   src={Logo || "/placeholder.svg"}
@@ -240,6 +240,41 @@ export default function Header() {
                 ))}
               </nav>
             </div>
+
+            <AnimatePresence>
+              {isMenuOpen && (
+                <motion.nav
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="md:hidden bg-[#f5f0e5] border-t border-[#d7c3a7]"
+                >
+                  <ul className="flex flex-col gap-4 p-4 text-[#654321]/80">
+                    {["Home", "About", "Events"].map((link) => (
+                      <motion.li
+                        key={link}
+                        whileHover={{ x: 5, color: "#8B4513" }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          link === "Events"
+                            ? setIsPromptOpen(true)
+                            : router.push(
+                                link === "Home"
+                                  ? "/"
+                                  : `/${link.toLowerCase()}`
+                              );
+                        }}
+                        className="block font-bold uppercase cursor-pointer transition"
+                      >
+                        {link}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </motion.nav>
+              )}
+            </AnimatePresence>
           </header>
         </>
       )}
@@ -247,7 +282,7 @@ export default function Header() {
       {/* ----------------------- PRIVATE NAVBAR: SUPERADMIN ----------------------- */}
       {isAuthenticated && userRole === "superadmin" && (
         <header className="sticky top-0 z-40 bg-[#f5f0e5]/80 backdrop-blur-md shadow-md border-b border-[#d7c3a7]">
-          <div className="py-5 container mx-auto px-4 flex items-center justify-between">
+          <div className="max-w-screen-xl mx-auto px-4 py-5 flex items-center justify-between">
             <Link href="/superadmindashboard" className="flex items-center gap-2">
               <Image
                 src={Logo || "/placeholder.svg"}
@@ -369,8 +404,8 @@ export default function Header() {
       {/* ----------------------- PRIVATE NAVBAR: ADMIN ----------------------- */}
       {isAuthenticated && userRole === "admin" && (
         <header className="sticky top-0 z-40 bg-[#f5f0e5]/80 backdrop-blur-md shadow-md border-b border-[#d7c3a7]">
-          <div className="py-5 container mx-auto px-4 flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center gap=2">
+          <div className="max-w-screen-xl mx-auto px-4 py-5 flex items-center justify-between">
+            <Link href="/dashboard" className="flex items-center gap-2">
               <Image
                 src={Logo || "/placeholder.svg"}
                 alt="CaviteVenture Logo"
@@ -490,8 +525,8 @@ export default function Header() {
       {/* ----------------------- PRIVATE NAVBAR: REGULAR USER ----------------------- */}
       {isAuthenticated && userRole !== "admin" && userRole !== "superadmin" && (
         <header className="sticky top-0 z-40 bg-[#f5f0e5]/80 backdrop-blur-md shadow-md border-b border-[#d7c3a7]">
-          <div className="py-5 container mx-auto px-4 flex items-center justify-between">
-            <Link href="/homepage" className="flex items-center gap=2">
+          <div className="max-w-screen-xl mx-auto px-4 py-5 flex items-center justify-between">
+            <Link href="/homepage" className="flex items-center gap-2">
               <Image
                 src={Logo || "/placeholder.svg"}
                 alt="CaviteVenture Logo"

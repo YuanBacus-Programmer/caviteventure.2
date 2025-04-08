@@ -3,11 +3,11 @@
 import Link from "next/link"
 import { motion } from "framer-motion"
 import Image from "next/image"
-import { Facebook, Twitter, Instagram, Clock, MapPin, Phone } from "lucide-react"
+import { Facebook, Twitter, Instagram, Clock, MapPin, Phone, Building } from "lucide-react"
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-b from-[#654321] to-[#f5f0e5] py-10 md:py-16 px-6 lg:px-24 border-t border-[#8B4513]/20 relative">
+    <footer className="bg-gradient-to-b from-[#8B4513] to-[#f8f5f0] py-12 md:py-16 px-6 lg:px-24 border-t border-[#e6d7c3] relative">
       {/* Decorative buildings silhouette at the top */}
       <div className="absolute top-0 left-0 w-full h-12 overflow-hidden opacity-20 pointer-events-none">
         <div
@@ -21,49 +21,60 @@ const Footer = () => {
 
       <div className="container mx-auto">
         {/* Top Section with Logo, Info and Navigation */}
-        <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between mb-8 pb-8 border-b border-[#8B4513]/20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10 pb-10 border-b border-[#e6d7c3]/30">
           {/* Logo & Museum Info */}
           <motion.div
-            className="flex flex-col items-center lg:items-start text-center lg:text-left max-w-xs"
+            className="flex flex-col items-center md:items-start text-center md:text-left"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <Link href="/" aria-label="Home">
-              <div className="mb-4 relative w-[120px] h-[40px] flex items-center justify-center">
+            <Link href="/" aria-label="Home" className="mb-4 flex items-center">
+              <div className="relative w-[120px] h-[40px] flex items-center justify-center">
                 <Image
                   src="/placeholder.svg?height=40&width=120"
                   alt="CaviteVenture Logo"
                   width={120}
                   height={40}
                   priority
-                  className="mb-4"
                 />
               </div>
             </Link>
-            <h3 className="text-[#654321] font-serif text-lg mb-2">CaviteVenture Heritage</h3>
-            <p className="text-[#8B4513]/80 text-sm">Preserving our past, inspiring our future</p>
+            <div className="flex items-center gap-2 mb-2">
+              <Building className="h-4 w-4 text-[#f8f5f0]" />
+              <h3 className="text-[#f8f5f0] font-serif text-lg">CaviteVenture Heritage</h3>
+            </div>
+            <p className="text-[#f8f5f0]/80 text-sm">Preserving our past, inspiring our future</p>
           </motion.div>
 
           {/* Visit Information */}
           <motion.div
-            className="flex flex-col items-center lg:items-start mt-6 lg:mt-0"
+            className="flex flex-col items-center md:items-start"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
-            <h4 className="text-[#654321] font-serif text-lg mb-3">Visit Us</h4>
-            <div className="flex flex-col space-y-2 text-[#8B4513]/80 text-sm">
-              <div className="flex items-center">
-                <Clock className="w-4 h-4 mr-2" />
+            <h4 className="text-[#f8f5f0] font-serif text-lg mb-4 relative">
+              <span className="relative z-10">Visit Us</span>
+              <span className="absolute bottom-0 left-0 w-12 h-1 bg-[#f8f5f0]/30 rounded-full"></span>
+            </h4>
+            <div className="flex flex-col space-y-3 text-[#f8f5f0]/80 text-sm">
+              <div className="flex items-center group">
+                <div className="w-8 h-8 rounded-full bg-[#f8f5f0]/10 flex items-center justify-center mr-3 group-hover:bg-[#f8f5f0]/20 transition-colors">
+                  <Clock className="w-4 h-4 text-[#f8f5f0]" />
+                </div>
                 <span>Tue-Sun: 10:00 AM - 5:00 PM</span>
               </div>
-              <div className="flex items-center">
-                <MapPin className="w-4 h-4 mr-2" />
+              <div className="flex items-center group">
+                <div className="w-8 h-8 rounded-full bg-[#f8f5f0]/10 flex items-center justify-center mr-3 group-hover:bg-[#f8f5f0]/20 transition-colors">
+                  <MapPin className="w-4 h-4 text-[#f8f5f0]" />
+                </div>
                 <span>123 Heritage Lane, Cavite</span>
               </div>
-              <div className="flex items-center">
-                <Phone className="w-4 h-4 mr-2" />
+              <div className="flex items-center group">
+                <div className="w-8 h-8 rounded-full bg-[#f8f5f0]/10 flex items-center justify-center mr-3 group-hover:bg-[#f8f5f0]/20 transition-colors">
+                  <Phone className="w-4 h-4 text-[#f8f5f0]" />
+                </div>
                 <span>(555) 123-4567</span>
               </div>
             </div>
@@ -71,13 +82,16 @@ const Footer = () => {
 
           {/* Navigation Links */}
           <motion.nav
-            className="flex flex-col items-center lg:items-start mt-6 lg:mt-0"
+            className="flex flex-col items-center md:items-start"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
           >
-            <h4 className="text-[#654321] font-serif text-lg mb-3">Explore</h4>
-            <div className="flex flex-col space-y-2">
+            <h4 className="text-[#f8f5f0] font-serif text-lg mb-4 relative">
+              <span className="relative z-10">Explore</span>
+              <span className="absolute bottom-0 left-0 w-12 h-1 bg-[#f8f5f0]/30 rounded-full"></span>
+            </h4>
+            <div className="grid grid-cols-2 md:grid-cols-1 gap-x-8 gap-y-2">
               {[
                 { name: "Exhibitions", path: "/exhibitions" },
                 { name: "Collections", path: "/collections" },
@@ -88,8 +102,9 @@ const Footer = () => {
                 <Link
                   key={name}
                   href={path}
-                  className="text-[#8B4513]/80 hover:text-[#654321] transition duration-300 text-sm"
+                  className="text-[#f8f5f0]/80 hover:text-[#f8f5f0] transition duration-300 text-sm flex items-center group"
                 >
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#f8f5f0]/40 mr-2 group-hover:bg-[#f8f5f0] transition-colors"></span>
                   {name}
                 </Link>
               ))}
@@ -98,23 +113,26 @@ const Footer = () => {
 
           {/* Newsletter Signup */}
           <motion.div
-            className="flex flex-col items-center lg:items-start mt-6 lg:mt-0 max-w-xs"
+            className="flex flex-col items-center md:items-start"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
           >
-            <h4 className="text-[#654321] font-serif text-lg mb-3">Stay Connected</h4>
-            <p className="text-[#8B4513]/80 text-sm mb-3">
+            <h4 className="text-[#f8f5f0] font-serif text-lg mb-4 relative">
+              <span className="relative z-10">Stay Connected</span>
+              <span className="absolute bottom-0 left-0 w-12 h-1 bg-[#f8f5f0]/30 rounded-full"></span>
+            </h4>
+            <p className="text-[#f8f5f0]/80 text-sm mb-4">
               Subscribe to our newsletter for updates on exhibitions and events
             </p>
-            <div className="flex w-full">
+            <div className="flex w-full max-w-xs">
               <input
                 type="email"
                 placeholder="Your email"
-                className="px-3 py-2 bg-[#f5f0e5] border border-[#e6d7c3] rounded-l-md text-sm w-full focus:outline-none focus:ring-1 focus:ring-[#8B4513]"
+                className="px-4 py-2.5 bg-[#f8f5f0] border border-[#e6d7c3] rounded-l-md text-sm w-full focus:outline-none focus:ring-1 focus:ring-[#8B4513] text-[#654321]"
               />
               <motion.button
-                className="bg-[#8B4513] hover:bg-[#654321] text-[#f5f0e5] px-3 py-2 rounded-r-md text-sm transition duration-300"
+                className="bg-[#654321] hover:bg-[#543210] text-[#f8f5f0] px-4 py-2.5 rounded-r-md text-sm transition duration-300 font-medium"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -127,7 +145,7 @@ const Footer = () => {
         {/* Bottom Section with Copyright and Social */}
         <div className="flex flex-col md:flex-row items-center justify-between">
           <motion.p
-            className="text-[#8B4513]/80 text-sm text-center md:text-left"
+            className="text-[#f8f5f0]/80 text-sm text-center md:text-left"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
@@ -147,10 +165,10 @@ const Footer = () => {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#8B4513] hover:text-[#654321] transition duration-300"
+                className="w-8 h-8 rounded-full bg-[#f8f5f0]/10 flex items-center justify-center hover:bg-[#f8f5f0]/20 transition-colors"
                 aria-label="Facebook"
               >
-                <Facebook className="w-5 h-5" />
+                <Facebook className="w-4 h-4 text-[#f8f5f0]" />
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.2, rotate: 5 }} whileTap={{ scale: 0.9 }}>
@@ -158,10 +176,10 @@ const Footer = () => {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#8B4513] hover:text-[#654321] transition duration-300"
+                className="w-8 h-8 rounded-full bg-[#f8f5f0]/10 flex items-center justify-center hover:bg-[#f8f5f0]/20 transition-colors"
                 aria-label="Twitter"
               >
-                <Twitter className="w-5 h-5" />
+                <Twitter className="w-4 h-4 text-[#f8f5f0]" />
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.2, rotate: 5 }} whileTap={{ scale: 0.9 }}>
@@ -169,10 +187,10 @@ const Footer = () => {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#8B4513] hover:text-[#654321] transition duration-300"
+                className="w-8 h-8 rounded-full bg-[#f8f5f0]/10 flex items-center justify-center hover:bg-[#f8f5f0]/20 transition-colors"
                 aria-label="Instagram"
               >
-                <Instagram className="w-5 h-5" />
+                <Instagram className="w-4 h-4 text-[#f8f5f0]" />
               </Link>
             </motion.div>
           </motion.div>
@@ -195,4 +213,3 @@ const Footer = () => {
 }
 
 export default Footer
-

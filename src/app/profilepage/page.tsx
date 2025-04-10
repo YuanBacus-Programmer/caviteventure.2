@@ -145,7 +145,7 @@ export default async function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-[#654321]">Account Type</span>
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#f5f0e5] text-[#8B4513] border border-[#e6d7c3]">
-                      {user.role === "admin" ? "Administrator" : "Standard"}
+                      {user.role === "admin" ? "Administrator" : "user"}
                     </span>
                   </div>
 

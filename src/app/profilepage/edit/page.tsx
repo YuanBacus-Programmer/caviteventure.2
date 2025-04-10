@@ -80,10 +80,6 @@ export default async function EditProfilePage() {
             <div className="max-w-2xl mx-auto">
               <div className="mb-6">
                 <h2 className="text-xl font-semibold text-[#654321] mb-2">Update Your Profile</h2>
-                <p className="text-[#8B4513]">
-                  Make changes to your profile information below. Your profile helps other Zentry members get to know
-                  you better.
-                </p>
               </div>
 
               <div className="bg-[#f8f5f0] p-6 rounded-xl border border-[#e6d7c3] mb-8">
@@ -93,6 +89,8 @@ export default async function EditProfilePage() {
                   initialCity={user.city}
                   initialGender={user.gender}
                   initialProfilePicture={user.profilePicture}
+                  initialBio={user.bio}
+                  cancelButtonText="Cancel and Return to Profile"
                 />
               </div>
 

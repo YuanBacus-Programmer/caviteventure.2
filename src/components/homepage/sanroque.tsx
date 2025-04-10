@@ -56,7 +56,7 @@ const SanRoque: React.FC = () => {
   return (
     <section className="min-h-screen bg-white text-[#1a1a1a] p-5 md:p-10 space-y-10">
       <h3 className="uppercase font-general text-xs pt-10 text-[#666666]">Cultural Heritage</h3>
-      <h1 className="plain-heading special-font md:text-[8rem] text-5xl max-w-5xl md:leading-[7rem] text-[#1a1a1a] font-light italic">
+      <h1 className="plain-heading md:text-[8rem] text-5xl max-w-5xl md:leading-[7rem] text-[#1a1a1a] font-light italic">
         S<b>a</b>n Roq<b>u</b>e Legacy
       </h1>
 

@@ -13,7 +13,6 @@ import BinakayanPage from "@/components/homepage/binakayan"
 import ZapotePage from "@/components/homepage/zapote"
 import SanRoquePage from "@/components/homepage/sanroque"
 import CasaDetajeroPage from "@/components/homepage/casadetajero"
-import Updates from "@/components/zentrihero/update"
 
 export default function ClientHome() {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -201,9 +200,6 @@ export default function ClientHome() {
       </div>
       <div className="mt-8">
         <CasaDetajeroPage />
-      </div>
-      <div className="mt-8">
-        <Updates />
       </div>
 
       {/* --------------- FAQ Section --------------- */}

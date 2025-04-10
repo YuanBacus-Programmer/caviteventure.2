@@ -31,13 +31,7 @@ const Footer = () => {
           >
             <Link href="/" aria-label="Home" className="mb-4 flex items-center">
               <div className="relative w-[120px] h-[40px] flex items-center justify-center">
-                <Image
-                  src="/placeholder.svg?height=40&width=120"
-                  alt="CaviteVenture Logo"
-                  width={120}
-                  height={40}
-                  priority
-                />
+                {/* Logo image or text can be added here */}
               </div>
             </Link>
             <div className="flex items-center gap-2 mb-2">
@@ -93,11 +87,8 @@ const Footer = () => {
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-1 gap-x-8 gap-y-2">
               {[
-                { name: "Exhibitions", path: "/exhibitions" },
-                { name: "Collections", path: "/collections" },
-                { name: "Events", path: "/events" },
-                { name: "Education", path: "/education" },
-                { name: "Membership", path: "/membership" },
+                { name: "Exhibitions", path: "/exhibitpage" },
+                { name: "Events", path: "/eventpage" },
               ].map(({ name, path }) => (
                 <Link
                   key={name}
@@ -111,35 +102,7 @@ const Footer = () => {
             </div>
           </motion.nav>
 
-          {/* Newsletter Signup */}
-          <motion.div
-            className="flex flex-col items-center md:items-start"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-          >
-            <h4 className="text-[#f8f5f0] font-serif text-lg mb-4 relative">
-              <span className="relative z-10">Stay Connected</span>
-              <span className="absolute bottom-0 left-0 w-12 h-1 bg-[#f8f5f0]/30 rounded-full"></span>
-            </h4>
-            <p className="text-[#f8f5f0]/80 text-sm mb-4">
-              Subscribe to our newsletter for updates on exhibitions and events
-            </p>
-            <div className="flex w-full max-w-xs">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="px-4 py-2.5 bg-[#f8f5f0] border border-[#e6d7c3] rounded-l-md text-sm w-full focus:outline-none focus:ring-1 focus:ring-[#8B4513] text-[#654321]"
-              />
-              <motion.button
-                className="bg-[#654321] hover:bg-[#543210] text-[#f8f5f0] px-4 py-2.5 rounded-r-md text-sm transition duration-300 font-medium"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Subscribe
-              </motion.button>
-            </div>
-          </motion.div>
+          {/* Note: "Stay Connected" section removed as per request */}
         </div>
 
         {/* Bottom Section with Copyright and Social */}

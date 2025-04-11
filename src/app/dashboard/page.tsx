@@ -7,20 +7,19 @@ import AdminDashboardClient from "./AdminDashboardClient";
 import dbConnect from "@/lib/dbConnect";
 
 export default async function DashboardPage() {
-  // Retrieve cookies
-  const cookieStore = await cookies();
-  const allCookies = cookieStore.getAll();
+  // Retrieve cookies synchronously (no await needed)
+  const cookieStore = cookies();
+  
+  // Cast the return value to an array with defined properties
+  const allCookies = (await cookieStore).getAll() as { name: string; value: string }[];
+
+  // Explicitly type the destructured cookie values to fix implicit 'any' issues
   const cookieHeader = allCookies
-    .map(({ name, value }) => `${name}=${value}`)
+    .map(({ name, value }: { name: string; value: string }) => `${name}=${value}`)
     .join("; ");
 
-  // Build absolute URL using VERCEL_URL or fallback to localhost
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
-
-  // 1) Verify user is admin via /api/auth/me
-  const authRes = await fetch(`${baseUrl}/api/auth/me`, {
+  // 1) Verify user is admin via /api/auth/me using a relative URL.
+  const authRes = await fetch(`/api/auth/me`, {
     headers: { cookie: cookieHeader },
     cache: "no-store",
   });
@@ -30,9 +29,9 @@ export default async function DashboardPage() {
     redirect("/signin");
   }
 
-  // 2) Fetch additional dashboard data
+  // 2) Connect to DB and fetch additional dashboard data.
   await dbConnect();
-  const dashRes = await fetch(`${baseUrl}/api/admin/dashboard`, {
+  const dashRes = await fetch(`/api/admin/dashboard`, {
     headers: { cookie: cookieHeader },
     cache: "no-store",
   });
@@ -42,7 +41,7 @@ export default async function DashboardPage() {
     redirect("/signin");
   }
 
-  // Provide safe defaults in case some fields are missing
+  // Provide safe defaults in case some fields are missing.
   const finalData = {
     totalUsers: dashData.data?.totalUsers ?? 0,
     totalMale: dashData.data?.totalMale ?? 0,
@@ -54,6 +53,6 @@ export default async function DashboardPage() {
     admins: dashData.data?.admins ?? [],
   };
 
-  // Render client component, passing the final data
+  // Render client component, passing the final data.
   return <AdminDashboardClient dashboardData={finalData} />;
 }

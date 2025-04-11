@@ -16,7 +16,7 @@ export default async function DashboardPage() {
       .join("; ");
 
     // Determine base URL
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://caviteventure.vercel.app/";
 
     // 1) Verify user is admin via /api/auth/me
     const authRes = await fetch(`${baseUrl}/api/auth/me`, {

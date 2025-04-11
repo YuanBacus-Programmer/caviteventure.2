@@ -24,7 +24,7 @@ export default async function UpdateEventPage({
     .map(({ name, value }: { name: string; value: string }) => `${name}=${value}`)
     .join("; ");
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://caviteventure.vercel.app/";
   const authMeUrl = `${baseUrl}/api/auth/me`;
   const authRes = await fetch(authMeUrl, { headers: { cookie: cookieHeader }, cache: "no-store" });
   const authData = await authRes.json();

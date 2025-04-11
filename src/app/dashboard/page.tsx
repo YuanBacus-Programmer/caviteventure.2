@@ -7,18 +7,15 @@ import AdminDashboardClient from "./AdminDashboardClient";
 import dbConnect from "@/lib/dbConnect";
 
 export default async function DashboardPage() {
-  // Retrieve cookies synchronously (no await needed)
-  const cookieStore = cookies();
-  
-  // Cast the return value to an array with defined properties
-  const allCookies = (await cookieStore).getAll() as { name: string; value: string }[];
-
-  // Explicitly type the destructured cookie values to fix implicit 'any' issues
+  // Retrieve cookies synchronously
+  const cookieStore = await cookies();
+  // Cast the return value to ensure both 'name' and 'value' are strings
+  const allCookies = cookieStore.getAll() as { name: string; value: string }[];
   const cookieHeader = allCookies
     .map(({ name, value }: { name: string; value: string }) => `${name}=${value}`)
     .join("; ");
 
-  // 1) Verify user is admin via /api/auth/me using a relative URL.
+  // 1) Verify user is admin via a relative URL.
   const authRes = await fetch(`/api/auth/me`, {
     headers: { cookie: cookieHeader },
     cache: "no-store",

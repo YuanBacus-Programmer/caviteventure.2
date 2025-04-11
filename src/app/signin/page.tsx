@@ -51,7 +51,7 @@ function FloatingPaths({ position, color }: { position: number; color: string })
 }
 
 // BackgroundPaths renders the animated background along with an animated title.
-function BackgroundPaths({ title = "Welcome Back" }: { title?: string }) {
+function BackgroundPaths({ title = "Welcome" }: { title?: string }) {
   const words = title.split(" ")
   const [isMobile, setIsMobile] = useState(false)
 
@@ -154,7 +154,7 @@ export default function SignInPage() {
       </motion.div>
 
       {/* Background Animation */}
-      <BackgroundPaths title="Welcome Back" />
+      <BackgroundPaths title="Welcome" />
 
       {/* Foreground SignIn Content */}
       <main className="relative flex flex-col items-center justify-center min-h-screen p-4 z-20">
